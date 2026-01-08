@@ -1,0 +1,451 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String      @id @default(uuid())
+  email           String      @unique
+  password        String
+  roleId          String      @default("user")
+  gender          Gender
+  birthDate       DateTime
+  height          Int // в см
+  formulaType     FormulaType @default(MIFFLIN_ST_JEOR) // формула расчета калорий
+  activityLevelId String      @default("sedentary") // уровень активности
+  timezone        String      @default("UTC") // часовой пояс пользователя
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  weights        Weight[]
+  goals          Goal[]
+  mealPlans      MealPlan[]
+  refreshTokens  RefreshToken[]
+  products       Product[] // продукты, созданные пользователем
+  dishes         Dish[] // блюда, созданные пользователем
+  favoriteDishes FavoriteDish[] // избранные блюда
+  activityLogs   ActivityLog[] // записи активности
+  productPrices  UserProductPrice[] // персональные цены на продукты
+  activityLevel  ActivityLevel      @relation(fields: [activityLevelId], references: [id])
+  role           UserRole           @relation(fields: [roleId], references: [id])
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model ActivityLevel {
+  id          String @id // sedentary, light, moderate, active, very_active
+  name        String @unique
+  description String
+  coefficient Float // коэффициент для расчета TDEE
+
+  users User[]
+
+  @@map("activity_levels")
+}
+
+model UserRole {
+  id          String   @id // user, admin
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  users User[]
+
+  @@map("user_roles")
+}
+
+model CalorieSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique // min_calories_female, max_deficit, pace_moderate, etc.
+  value       Float
+  category    String // safety_limits, pace_options, scientific
+  label       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("calorie_settings")
+}
+
+model Weight {
+  id     String   @id @default(uuid())
+  userId String
+  weight Float
+  date   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("weights")
+}
+
+model Goal {
+  id                   String     @id @default(uuid())
+  userId               String
+  initialWeight        Float? // вес на момент создания цели
+  targetWeight         Float?
+  targetCalories       Int?
+  targetSteps          Int? // целевое количество шагов в день
+  targetBurnedCalories Float? // целевые сожженные калории в день
+  startDate            DateTime   @default(now())
+  endDate              DateTime?
+  isActive             Boolean    @default(true)
+  status               GoalStatus @default(IN_PROGRESS)
+  isArchived           Boolean    @default(false)
+  deletedAt            DateTime?
+  deletedBy            String?
+  user                 User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String       @id @default(uuid())
+  name      String       @unique
+  createdAt DateTime     @default(now())
+  products  ProductTag[]
+
+  @@map("tags")
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  // КБЖУ на 100г
+  calories Float
+  proteins Float
+  fats     Float
+  carbs    Float
+
+  // Дополнительные макросы
+  fiber        Float? // клетчатка на 100г
+  sugar        Float? // сахар на 100г
+  saturatedFat Float? // насыщенные жиры на 100г
+  sodium       Float? // натрий в мг на 100г
+
+  // Порция и единицы измерения
+  servingSize Float? // стандартная порция в граммах/мл
+  unit        UnitType @default(G) // единица измерения
+
+  // Метаданные продукта
+  brand   String? // бренд/производитель
+  barcode String? @unique // штрих-код для сканирования (EAN-13/UPC)
+
+  // Медиа
+  photo String?
+
+  // Модерация и владение
+  isVerified Boolean    @default(false) // проверены ли данные
+  source     DataSource @default(USER) // источник данных
+  userId     String? // создатель продукта (null = системный)
+  isPublic   Boolean    @default(true) // видимость продукта
+
+  // Категория
+  categoryId String
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Связи
+  category        Category           @relation(fields: [categoryId], references: [id])
+  tags            ProductTag[]
+  dishIngredients DishIngredient[] // использование в блюдах
+  mealPlans       MealPlan[]
+  creator         User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userPrices      UserProductPrice[] // персональные цены пользователей
+
+  @@map("products")
+}
+
+model ProductTag {
+  productId String
+  tagId     String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+  @@map("product_tags")
+}
+
+model UserProductPrice {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("user_product_prices")
+}
+
+model Dish {
+  id          String  @id @default(uuid())
+  name        String
+  description String? @db.Text
+  photo       String?
+
+  // Порции и размер
+  servings    Int    @default(1) // количество порций
+  servingSize Float? // размер одной порции в граммах (опционально)
+
+  // Автоматически рассчитываемые поля (из ингредиентов)
+  totalCalories Float  @default(0)
+  totalProteins Float  @default(0)
+  totalFats     Float  @default(0)
+  totalCarbs    Float  @default(0)
+  totalFiber    Float? // опционально
+  totalSugar    Float? // опционально
+  totalPrice    Float? // опционально
+  totalWeight   Float  @default(0) // общий вес ингредиентов в граммах
+
+  // КБЖУ на порцию (вычисляется = total / servings)
+  caloriesPerServing Float  @default(0)
+  proteinsPerServing Float  @default(0)
+  fatsPerServing     Float  @default(0)
+  carbsPerServing    Float  @default(0)
+  pricePerServing    Float?
+
+  // Метаданные приготовления
+  cookingTimeMinutes Int?
+  difficulty         DifficultyLevel @default(MEDIUM)
+
+  // Категоризация
+  mealType     MealType?
+  cuisineType  CuisineType?
+  dishCategory DishCategory?
+
+  // Модерация и доступ
+  userId     String?
+  isPublic   Boolean    @default(true)
+  isVerified Boolean    @default(false)
+  source     DataSource @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Связи
+  creator     User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ingredients DishIngredient[]
+  tags        DishTagRelation[]
+  favorites   FavoriteDish[]
+  mealPlans   MealPlan[]
+
+  @@map("dishes")
+}
+
+model DishIngredient {
+  id        String   @id @default(uuid())
+  dishId    String
+  productId String
+  amount    Float // количество продукта
+  unit      UnitType @default(G) // единица измерения
+
+  dish    Dish    @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@unique([dishId, productId]) // один продукт один раз в блюде
+  @@map("dish_ingredients")
+}
+
+model DishTag {
+  id        String       @id @default(uuid())
+  name      String       @unique
+  category  TagCategory? // группировка тегов
+  createdAt DateTime     @default(now())
+
+  dishes DishTagRelation[]
+
+  @@map("dish_tags")
+}
+
+model DishTagRelation {
+  dishId String
+  tagId  String
+
+  dish Dish    @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  tag  DishTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([dishId, tagId])
+  @@map("dish_tag_relations")
+}
+
+model FavoriteDish {
+  userId  String
+  dishId  String
+  addedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dish Dish @relation(fields: [dishId], references: [id], onDelete: Cascade)
+
+  @@id([userId, dishId])
+  @@map("favorite_dishes")
+}
+
+model MealPlan {
+  id        String   @id @default(uuid())
+  userId    String
+  date      DateTime
+  mealType  MealType
+  dishId    String?
+  productId String?
+  amount    Float
+  isEaten   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dish      Dish?    @relation(fields: [dishId], references: [id])
+  product   Product? @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("meal_plans")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+enum GoalStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum FormulaType {
+  MIFFLIN_ST_JEOR // Миффлина-Сан Жеора (рекомендуется)
+  HARRIS_BENEDICT
+}
+
+enum UnitType {
+  G // граммы
+  ML // миллилитры
+  PIECE // штуки
+  PORTION // порции
+}
+
+enum DataSource {
+  ADMIN // добавлено администратором
+  USER // добавлено пользователем
+  API // импортировано из внешнего API
+  IMPORT // массовый импорт
+}
+
+enum CuisineType {
+  RUSSIAN
+  ITALIAN
+  ASIAN
+  MEXICAN
+  FRENCH
+  JAPANESE
+  AMERICAN
+  INDIAN
+  MEDITERRANEAN
+  MIDDLE_EASTERN
+  OTHER
+}
+
+enum DishCategory {
+  MAIN_COURSE // основное блюдо
+  SOUP // суп
+  SALAD // салат
+  SIDE_DISH // гарнир
+  DESSERT // десерт
+  BEVERAGE // напиток
+  APPETIZER // закуска
+  BREAKFAST // завтрак
+  SAUCE // соус
+  OTHER
+}
+
+enum DifficultyLevel {
+  EASY // простое
+  MEDIUM // среднее
+  HARD // сложное
+}
+
+enum TagCategory {
+  DIETARY // диетические
+  MEAL_TIME // время приема
+  COOKING_TIME // время готовки
+  DIFFICULTY // сложность
+  CUISINE // кухня
+  OCCASION // повод
+  SPECIAL // особые
+}
+
+model ActivityLog {
+  id               String   @id @default(uuid())
+  userId           String
+  date             DateTime @db.Date // дата без времени (YYYY-MM-DD)
+  recordedAt       DateTime @default(now()) // когда была создана запись
+  steps            Int      @default(0) // суммарное количество шагов за день
+  burnedCalories   Float    @default(0) // сожженные калории за день
+  consumedCalories Float? // потребленные калории (опционально, из meal plans)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities Activity[] // детальные записи активностей за день
+
+  @@unique([userId, date]) // одна запись на дату для пользователя
+  @@map("activity_logs")
+}
+
+model Activity {
+  id              String       @id @default(uuid())
+  activityLogId   String
+  type            ActivityType @default(WALKING)
+  steps           Int // шаги в этой активности
+  burnedCalories  Float // калории этой активности
+  durationMinutes Int? // длительность в минутах (опционально)
+  notes           String? // заметки пользователя
+  performedAt     DateTime     @default(now()) // когда выполнена активность
+  createdAt       DateTime     @default(now())
+
+  activityLog ActivityLog @relation(fields: [activityLogId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
+}
+
+enum ActivityType {
+  WALKING // обычная ходьба (~0.04 ккал/шаг/кг)
+  FAST_WALKING // быстрая ходьба (~0.06 ккал/шаг/кг)
+  RUNNING // бег (~0.09 ккал/шаг/кг)
+  CUSTOM // пользовательская активность
+}

@@ -1,0 +1,90 @@
+@theme {
+	--color-surface: #ffffff;
+	--color-surface-dark: #1f2937;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
+	}
+}
+
+* {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+		'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		sans-serif;
+}
+
+// Анимированный градиентный фон с улучшенной анимацией
+.animated-bg {
+	background: linear-gradient(
+		45deg,
+		#93c5fd 0%,
+		#a78bfa 20%,
+		#c084fc 40%,
+		#f9a8d4 60%,
+		#93c5fd 80%,
+		#a5f3fc 100%
+	);
+	background-size: 300% 300%;
+	animation: gradientFlow 25s ease infinite;
+	opacity: 0.25;
+	filter: blur(100px);
+}
+
+@keyframes gradientFlow {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+// Улучшенные секции с легкой прозрачностью
+#features article,
+#how-it-works,
+#stats,
+#testimonials,
+#blog {
+	backdrop-filter: blur(8px);
+	background-color: rgba(255, 255, 255, 0.9);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+	&:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+	}
+}
+
+// Анимация появления
+.fade-in {
+	animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// Гладкая прокрутка
+html {
+	scroll-behavior: smooth;
+}
+
+// Эффект стекла для карточек
+.glass-effect {
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}

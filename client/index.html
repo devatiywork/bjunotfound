@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/logo-black.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="BjuNotFound - менеджер питания и активности с трекингом КБЖУ"
+		/>
+		<meta
+			name="keywords"
+			content="КБЖУ, трекинг питания, дневник еды, калории, белки жиры углеводы, фитнес, здоровье, питание, активность"
+		/>
+		<meta name="author" content="BjuNotFound" />
+		<meta property="og:title" content="BjuNotFound - Управляй своим питанием" />
+		<meta
+			property="og:description"
+			content="Трекинг КБЖУ, дневник питания, цели и физические характеристики в одном приложении"
+		/>
+		<meta property="og:image" content="/logo-white.png" />
+		<meta property="og:type" content="website" />
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "SoftwareApplication",
+				"name": "BjuNotFound",
+				"description": "Менеджер питания и активности с трекингом КБЖУ",
+				"url": "https://bjunotfound.com",
+				"applicationCategory": "HealthApplication",
+				"operatingSystem": "Web",
+				"offers": {
+					"@type": "Offer",
+					"price": "0",
+					"priceCurrency": "RUB"
+				},
+				"aggregateRating": {
+					"@type": "AggregateRating",
+					"ratingValue": "4.8",
+					"ratingCount": "1250"
+				}
+			}
+		</script>
+		<title>BJUNotFound - Управляй своим питанием</title>
+
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "SoftwareApplication",
+				"name": "BjuNotFound",
+				"description": "Менеджер питания и активности с трекингом КБЖУ",
+				"applicationCategory": "HealthApplication",
+				"operatingSystem": "Web",
+				"offers": {
+					"@type": "Offer",
+					"price": "0",
+					"priceCurrency": "RUB"
+				},
+				"aggregateRating": {
+					"@type": "AggregateRating",
+					"ratingValue": "4.8",
+					"ratingCount": "1250"
+				}
+			}
+		</script>
+
+		<!-- Google Fonts - Inter -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+	</head>
+	<body class="animated-gradient relative overflow-x-hidden">
+		<!-- Animated Background -->
+		<div class="fixed inset-0 -z-10 animated-bg"></div>
+
+		<!-- Landing Page - скрывается на маршрутах /app/* -->
+		<div id="landing" class="min-h-screen flex flex-col relative z-10">
+			<!-- Header -->
+			<header class="container mx-auto px-4 py-6">
+				<nav
+					class="flex items-center justify-between"
+					aria-label="Основная навигация"
+				>
+					<div class="flex items-center space-x-3">
+						<img
+							src="/logo-white.png"
+							alt="BjuNotFound - логотип приложения"
+							class="w-20 h-20 object-contain"
+							loading="lazy"
+						/>
+					</div>
+					<div class="hidden md:flex space-x-4">
+						<a
+							href="/app/login"
+							class="px-4 py-2 text-gray-700 hover:text-blue-600 transition"
+							aria-label="Перейти к странице входа"
+							>Войти</a
+						>
+						<a
+							href="/app/register"
+							class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md"
+							aria-label="Перейти к странице регистрации"
+							>Регистрация</a
+						>
+					</div>
+				</nav>
+			</header>
+
+			<!-- Hero Content -->
+			<main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+				<section
+					id="hero"
+					class="max-w-4xl mx-auto text-center"
+					data-aos="fade-up"
+				>
+					<h1
+						class="text-4xl md:text-6xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+					>
+						Управляй своим
+						<span
+							class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600"
+							>питанием</span
+						>
+						легко
+					</h1>
+					<p class="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
+						Трекинг КБЖУ, дневник питания, цели и физические характеристики в
+						одном приложении
+					</p>
+					<div
+						class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+					>
+						<a
+							href="/app/register"
+							class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white text-lg font-semibold rounded-lg hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition shadow-lg transform hover:scale-105"
+							aria-label="Зарегистрироваться и начать использовать приложение"
+						>
+							Начать бесплатно
+						</a>
+					</div>
+				</section>
+
+				<!-- Features Section -->
+				<section id="features" class="mt-20" data-aos="fade-up">
+					<h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+						Возможности приложения
+					</h2>
+					<div
+						class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+					>
+						<!-- Feature 1 -->
+						<article
+							class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 max-w-xs mx-auto w-full border border-white/20 hover:border-blue-300 transform hover:scale-105"
+						>
+							<div
+								class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg"
+							>
+								<svg
+									class="w-8 h-8 text-white"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+									></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-bold text-gray-900 mb-3">
+								База продуктов
+							</h3>
+							<p class="text-gray-600">
+								Добавляй продукты и блюда с автоматическим расчетом КБЖУ
+							</p>
+						</article>
+
+						<!-- Feature 2 -->
+						<article
+							class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 max-w-xs mx-auto w-full border border-white/20 hover:border-green-300 transform hover:scale-105"
+						>
+							<div
+								class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg"
+							>
+								<svg
+									class="w-8 h-8 text-white"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+									></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-bold text-gray-900 mb-3">
+								Дневник питания
+							</h3>
+							<p class="text-gray-600">
+								Отслеживай все приемы пищи и следи за калориями
+							</p>
+						</article>
+
+						<!-- Feature 3 -->
+						<article
+							class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 max-w-xs mx-auto w-full border border-white/20 hover:border-purple-300 transform hover:scale-105"
+						>
+							<div
+								class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg"
+							>
+								<svg
+									class="w-8 h-8 text-white"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+									></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-bold text-gray-900 mb-3">
+								Цели и прогресс
+							</h3>
+							<p class="text-gray-600">
+								Устанавливай цели по питанию и активности
+							</p>
+						</article>
+
+						<!-- Feature 4 -->
+						<article
+							class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 max-w-xs mx-auto w-full border border-white/20 hover:border-orange-300 transform hover:scale-105"
+						>
+							<div
+								class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg"
+							>
+								<svg
+									class="w-8 h-8 text-white"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+									></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-bold text-gray-900 mb-3">
+								Физ. параметры
+							</h3>
+							<p class="text-gray-600">
+								Контролируй вес, рост и другие показатели
+							</p>
+						</article>
+					</div>
+				</section>
+
+				<!-- How It Works Section -->
+				<section
+					id="how-it-works"
+					class="mt-20 py-16 bg-white/60 backdrop-blur-sm rounded-3xl fade-in"
+					data-aos="fade-up"
+					data-aos-delay="200"
+				>
+					<div class="max-w-6xl mx-auto px-4">
+						<h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+							Как это работает
+						</h2>
+						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+							<!-- Step 1 -->
+							<div class="text-center group">
+								<div
+									class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-all duration-300"
+								>
+									1
+								</div>
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Регистрация
+								</h3>
+								<p class="text-gray-600">
+									Создай аккаунт за 30 секунд и настрой профиль
+								</p>
+							</div>
+							<!-- Step 2 -->
+							<div class="text-center group">
+								<div
+									class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-700 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-all duration-300"
+								>
+									2
+								</div>
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Добавь продукты
+								</h3>
+								<p class="text-gray-600">
+									Ищи в базе или добавляй свои блюда с расчетом КБЖУ
+								</p>
+							</div>
+							<!-- Step 3 -->
+							<div class="text-center group">
+								<div
+									class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-all duration-300"
+								>
+									3
+								</div>
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Веди дневник
+								</h3>
+								<p class="text-gray-600">
+									Записывай приемы пищи и отслеживай калории
+								</p>
+							</div>
+							<!-- Step 4 -->
+							<div class="text-center group">
+								<div
+									class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-all duration-300"
+								>
+									4
+								</div>
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Следи за прогрессом
+								</h3>
+								<p class="text-gray-600">
+									Анализируй цели и корректируй питание
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Stats Section -->
+				<section
+					id="stats"
+					class="py-16 bg-gradient-to-br from-white/70 via-blue-50/50 to-purple-50/50 backdrop-blur-sm rounded-3xl fade-in mt-6"
+					data-aos="fade-up"
+					data-aos-delay="400"
+				>
+					<div class="max-w-6xl mx-auto px-4">
+						<h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+							BjuNotFound в цифрах
+						</h2>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+							<div
+								class="group p-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+							>
+								<div
+									class="text-6xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent mb-3"
+								>
+									50K+
+								</div>
+								<p class="text-gray-700 font-semibold">
+									Активных пользователей
+								</p>
+							</div>
+							<div
+								class="group p-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+							>
+								<div
+									class="text-6xl font-bold bg-gradient-to-r from-green-500 to-emerald-700 bg-clip-text text-transparent mb-3"
+								>
+									100K+
+								</div>
+								<p class="text-gray-700 font-semibold">Продуктов в базе</p>
+							</div>
+							<div
+								class="group p-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+							>
+								<div
+									class="text-6xl font-bold bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent mb-3"
+								>
+									3 кг
+								</div>
+								<p class="text-gray-700 font-semibold">
+									Средний результат за месяц
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Testimonials Section -->
+				<section
+					id="testimonials"
+					class="py-12 bg-gray-50 rounded-3xl fade-in mt-6"
+					data-aos="fade-up"
+					data-aos-delay="600"
+				>
+					<div class="max-w-6xl mx-auto px-4">
+						<h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+							Отзывы пользователей
+						</h2>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+							<!-- Testimonial 1 -->
+							<div class="bg-white p-6 rounded-xl shadow-md">
+								<div class="flex items-center mb-4">
+									<div
+										class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold"
+									>
+										А
+									</div>
+									<div class="ml-4">
+										<h4 class="font-semibold text-gray-900">Анна К.</h4>
+										<div class="flex text-yellow-400">★★★★★</div>
+									</div>
+								</div>
+								<p class="text-gray-600">
+									"Отличное приложение! Легко отслеживать питание и видеть
+									прогресс. Сбросила 5 кг за 2 месяца."
+								</p>
+							</div>
+							<!-- Testimonial 2 -->
+							<div class="bg-white p-6 rounded-xl shadow-md">
+								<div class="flex items-center mb-4">
+									<div
+										class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold"
+									>
+										М
+									</div>
+									<div class="ml-4">
+										<h4 class="font-semibold text-gray-900">Михаил П.</h4>
+										<div class="flex text-yellow-400">★★★★★</div>
+									</div>
+								</div>
+								<p class="text-gray-600">
+									"Удобная база продуктов и точные расчеты. Рекомендую всем, кто
+									следит за фигурой!"
+								</p>
+							</div>
+							<!-- Testimonial 3 -->
+							<div class="bg-white p-6 rounded-xl shadow-md">
+								<div class="flex items-center mb-4">
+									<div
+										class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold"
+									>
+										Е
+									</div>
+									<div class="ml-4">
+										<h4 class="font-semibold text-gray-900">Елена С.</h4>
+										<div class="flex text-yellow-400">★★★★★</div>
+									</div>
+								</div>
+								<p class="text-gray-600">
+									"Приложение помогло понять, что я ем. Теперь питаюсь осознанно
+									и чувствую себя лучше."
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Screenshots Section -->
+				<section
+					id="screenshots"
+					class="py-12 bg-white rounded-3xl fade-in mt-6"
+					data-aos="fade-up"
+					data-aos-delay="800"
+				>
+					<div class="max-w-6xl mx-auto px-4">
+						<h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+							Интерфейс приложения
+						</h2>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+							<div class="text-center">
+								<div
+									class="bg-gray-200 h-64 rounded-lg flex items-center justify-center mb-4"
+								>
+									<span class="text-gray-500">Скриншот дневника питания</span>
+								</div>
+								<p class="text-gray-600">Удобный трекинг приемов пищи</p>
+							</div>
+							<div class="text-center">
+								<div
+									class="bg-gray-200 h-64 rounded-lg flex items-center justify-center mb-4"
+								>
+									<span class="text-gray-500">График прогресса</span>
+								</div>
+								<p class="text-gray-600">Визуализация целей и достижений</p>
+							</div>
+							<div class="text-center">
+								<div
+									class="bg-gray-200 h-64 rounded-lg flex items-center justify-center mb-4"
+								>
+									<span class="text-gray-500">База продуктов</span>
+								</div>
+								<p class="text-gray-600">Быстрый поиск и добавление</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Blog/Resources Section -->
+				<!-- <section
+					id="blog"
+					class="py-12 bg-gray-50 rounded-3xl fade-in mt-6"
+					data-aos="fade-up"
+					data-aos-delay="1000"
+				>
+					<div class="max-w-6xl mx-auto px-4">
+						<h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+							Полезные материалы
+						</h2>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+							<div class="bg-white p-6 rounded-xl shadow-md">
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Как считать КБЖУ
+								</h3>
+								<p class="text-gray-600 mb-4">
+									Простое руководство по расчету калорий и макронутриентов.
+								</p>
+								<a href="#" class="text-blue-600 hover:underline"
+									>Читать далее →</a
+								>
+							</div>
+							<div class="bg-white p-6 rounded-xl shadow-md">
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Мифы о питании
+								</h3>
+								<p class="text-gray-600 mb-4">
+									Разбираем распространенные заблуждения о здоровом питании.
+								</p>
+								<a href="#" class="text-blue-600 hover:underline"
+									>Читать далее →</a
+								>
+							</div>
+							<div class="bg-white p-6 rounded-xl shadow-md">
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									Фитнес и питание
+								</h3>
+								<p class="text-gray-600 mb-4">
+									Как сочетать тренировки с правильным питанием для лучших
+									результатов.
+								</p>
+								<a href="#" class="text-blue-600 hover:underline"
+									>Читать далее →</a
+								>
+							</div>
+						</div>
+					</div>
+				</section> -->
+			</main>
+
+			<!-- Footer -->
+			<footer
+				class="bg-gradient-to-br from-gray-900/95 via-blue-900/95 to-purple-900/95 backdrop-blur-md text-white mt-10"
+				role="contentinfo"
+			>
+				<div class="container mx-auto px-4 py-16">
+					<!-- Main Footer Content -->
+					<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+						<!-- Brand Section -->
+						<div class="md:col-span-1">
+							<div class="flex items-center space-x-3 mb-4">
+								<img
+									src="/logo-white.png"
+									alt="BjuNotFound"
+									class="w-16 h-16 object-contain"
+									loading="lazy"
+								/>
+								<span class="text-2xl font-bold">BjuNotFound</span>
+							</div>
+							<p class="text-gray-300 text-sm">
+								Твой персональный помощник в управлении питанием и здоровьем.
+								Достигай целей легко!
+							</p>
+						</div>
+
+						<!-- Quick Links -->
+						<div>
+							<h3 class="text-lg font-semibold mb-4 text-white">Навигация</h3>
+							<ul class="space-y-2 text-gray-300">
+								<li>
+									<a
+										href="#features"
+										class="hover:text-blue-400 transition inline-flex items-center"
+									>
+										<svg
+											class="w-4 h-4 mr-2"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5l7 7-7 7"
+											></path>
+										</svg>
+										Возможности
+									</a>
+								</li>
+								<li>
+									<a
+										href="#how-it-works"
+										class="hover:text-blue-400 transition inline-flex items-center"
+									>
+										<svg
+											class="w-4 h-4 mr-2"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5l7 7-7 7"
+											></path>
+										</svg>
+										Как это работает
+									</a>
+								</li>
+								<li>
+									<a
+										href="#testimonials"
+										class="hover:text-blue-400 transition inline-flex items-center"
+									>
+										<svg
+											class="w-4 h-4 mr-2"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5l7 7-7 7"
+											></path>
+										</svg>
+										Отзывы
+									</a>
+								</li>
+								<li>
+									<a
+										href="#blog"
+										class="hover:text-blue-400 transition inline-flex items-center"
+									>
+										<svg
+											class="w-4 h-4 mr-2"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5l7 7-7 7"
+											></path>
+										</svg>
+										Блог
+									</a>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Resources -->
+						<div>
+							<h3 class="text-lg font-semibold mb-4 text-white">Ресурсы</h3>
+							<ul class="space-y-2 text-gray-300">
+								<li>
+									<a href="#" class="hover:text-green-400 transition"
+										>База знаний</a
+									>
+								</li>
+								<li>
+									<a href="#" class="hover:text-green-400 transition">FAQ</a>
+								</li>
+								<li>
+									<a href="#" class="hover:text-green-400 transition"
+										>Поддержка</a
+									>
+								</li>
+								<li>
+									<a href="#" class="hover:text-green-400 transition"
+										>Документация API</a
+									>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Social & Contact -->
+						<div>
+							<h3 class="text-lg font-semibold mb-4 text-white">
+								Будь на связи
+							</h3>
+							<div class="flex space-x-4 mb-4">
+								<!-- Social Icons -->
+								<a
+									href="#"
+									class="w-10 h-10 bg-white/10 hover:bg-blue-500 rounded-full flex items-center justify-center transition"
+									aria-label="Telegram"
+								>
+									<svg
+										class="w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+										aria-hidden="true"
+									>
+										<path
+											d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z"
+										/>
+									</svg>
+								</a>
+								<a
+									href="#"
+									class="w-10 h-10 bg-white/10 hover:bg-pink-500 rounded-full flex items-center justify-center transition"
+									aria-label="Instagram"
+								>
+									<svg
+										class="w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+										aria-hidden="true"
+									>
+										<path
+											d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"
+										/>
+										<path
+											d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+										/>
+									</svg>
+								</a>
+								<a
+									href="#"
+									class="w-10 h-10 bg-white/10 hover:bg-blue-400 rounded-full flex items-center justify-center transition"
+									aria-label="Twitter"
+								>
+									<svg
+										class="w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+										aria-hidden="true"
+									>
+										<path
+											d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+										/>
+									</svg>
+								</a>
+								<a
+									href="#"
+									class="w-10 h-10 bg-white/10 hover:bg-green-500 rounded-full flex items-center justify-center transition"
+									aria-label="WhatsApp"
+								>
+									<svg
+										class="w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+										aria-hidden="true"
+									>
+										<path
+											d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
+										/>
+									</svg>
+								</a>
+							</div>
+							<p class="text-gray-300 text-sm">
+								Email:
+								<a
+									href="mailto:support@bjunotfound.com"
+									class="text-blue-400 hover:underline"
+									>support@bjunotfound.com</a
+								>
+							</p>
+						</div>
+					</div>
+
+					<!-- Call to Action -->
+					<div class="text-center py-8 border-t border-white/10">
+						<h3 class="text-2xl font-bold mb-4">
+							Готов начать свой путь к здоровью?
+						</h3>
+						<a
+							href="/app/register"
+							class="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg font-semibold rounded-lg hover:from-blue-600 hover:to-purple-700 transition shadow-lg transform hover:scale-105"
+							aria-label="Зарегистрироваться в приложении"
+						>
+							Начать бесплатно
+						</a>
+					</div>
+
+					<!-- Bottom Bar -->
+					<div
+						class="border-t border-white/10 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm"
+					>
+						<p>&copy; 2025 BjuNotFound. Все права защищены.</p>
+						<div class="flex space-x-6 mt-4 md:mt-0">
+							<a href="#" class="hover:text-white transition"
+								>Политика конфиденциальности</a
+							>
+							<a href="#" class="hover:text-white transition"
+								>Условия использования</a
+							>
+							<a href="#" class="hover:text-white transition">Cookie</a>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+
+		<!-- React App будет монтироваться только на /app/* маршрутах -->
+		<div id="root"></div>
+
+		<script>
+			// Скрываем лендинг на маршрутах /app/*
+			if (window.location.pathname.startsWith('/app')) {
+				const landing = document.getElementById('landing')
+				if (landing) {
+					landing.style.display = 'none'
+				}
+				document.body.className = '' // Убираем фоновый градиент для app страниц
+			}
+		</script>
+		<script type="module" src="/src/main.tsx"></script>
+		<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+		<script>
+			AOS.init({
+				duration: 800,
+				once: true,
+			})
+		</script>
+		<script>
+			;(() => {
+				const el = document.querySelector('.animated-gradient')
+				if (!el) return
+
+				const setPos = (clientX, clientY) => {
+					const r = el.getBoundingClientRect()
+					const x = clientX - (r.left + r.width / 2)
+					const y = clientY - (r.top + r.height / 2)
+					el.style.setProperty('--posX', String(x))
+					el.style.setProperty('--posY', String(y))
+				}
+
+				const onPointerMove = e => setPos(e.clientX, e.clientY)
+				const onPointerLeave = () => {
+					el.style.setProperty('--posX', '0')
+					el.style.setProperty('--posY', '0')
+				}
+
+				// pointermove работает и для мыши, и для тача (если браузер поддерживает)
+				el.addEventListener('pointermove', onPointerMove, { passive: true })
+				el.addEventListener('pointerleave', onPointerLeave, { passive: true })
+
+				// стартовое положение по центру
+				const r = el.getBoundingClientRect()
+				setPos(r.left + r.width / 2, r.top + r.height / 2)
+			})()
+		</script>
+	</body>
+</html>

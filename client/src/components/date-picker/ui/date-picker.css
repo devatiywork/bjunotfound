@@ -1,0 +1,118 @@
+/* Стилизация календаря */
+.date-picker-calendar {
+	@apply font-sans shadow-xl rounded-xl border-0;
+}
+
+/* Контейнер календаря */
+.react-datepicker {
+	@apply bg-white dark:bg-gray-800 border-0 rounded-xl shadow-2xl overflow-hidden;
+}
+
+/* Заголовок календаря */
+.react-datepicker__header {
+	@apply bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 border-0 rounded-t-xl pt-4 pb-3;
+}
+
+/* Текущий месяц */
+.react-datepicker__current-month {
+	@apply text-white font-bold text-base mb-2;
+}
+
+/* Дни недели */
+.react-datepicker__day-names {
+	@apply mt-2;
+}
+
+.react-datepicker__day-name {
+	@apply text-blue-100 dark:text-blue-200 font-semibold text-xs w-10 leading-9;
+}
+
+/* Месяц (контейнер дней) */
+.react-datepicker__month {
+	@apply m-2;
+}
+
+/* Дни */
+.react-datepicker__day {
+	@apply text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-lg transition-colors w-10 leading-9 text-sm font-medium;
+}
+
+/* Выбранный день */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+	@apply bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 font-bold;
+}
+
+/* Сегодня */
+.react-datepicker__day--today {
+	@apply font-bold ring-2 ring-blue-400 dark:ring-blue-300 ring-inset;
+}
+
+/* Отключенные дни */
+.react-datepicker__day--disabled {
+	@apply text-gray-300 dark:text-gray-700 cursor-not-allowed hover:bg-transparent;
+}
+
+/* Месяцы вне текущего */
+.react-datepicker__day--outside-month {
+	@apply text-gray-400 dark:text-gray-600;
+}
+
+/* Навигационные кнопки */
+.react-datepicker__navigation {
+	@apply top-4 w-8 h-8;
+}
+
+.react-datepicker__navigation--previous {
+	@apply left-3;
+}
+
+.react-datepicker__navigation--next {
+	@apply right-3;
+}
+
+.react-datepicker__navigation-icon::before {
+	@apply border-white dark:border-blue-100 border-t-2 border-r-2;
+}
+
+/* Выпадающие списки */
+.react-datepicker__year-dropdown,
+.react-datepicker__month-dropdown,
+.react-datepicker__month-year-dropdown {
+	@apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg;
+}
+
+.react-datepicker__year-option,
+.react-datepicker__month-option,
+.react-datepicker__month-year-option {
+	@apply text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900 py-1;
+}
+
+.react-datepicker__year-option--selected,
+.react-datepicker__month-option--selected,
+.react-datepicker__month-year-option--selected {
+	@apply bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700;
+}
+
+/* Кнопка чтения выпадающих списков */
+.react-datepicker__year-read-view,
+.react-datepicker__month-read-view,
+.react-datepicker__month-year-read-view {
+	@apply text-white;
+}
+
+.react-datepicker__year-read-view--down-arrow,
+.react-datepicker__month-read-view--down-arrow,
+.react-datepicker__month-year-read-view--down-arrow {
+	@apply border-white;
+}
+
+/* Треугольник под инпутом */
+.react-datepicker__triangle {
+	@apply hidden;
+}
+
+/* Прокрутка года */
+.react-datepicker__year-dropdown--scrollable {
+	@apply max-h-64;
+}

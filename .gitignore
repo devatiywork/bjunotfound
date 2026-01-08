@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+
+
+# Production builds
+/client/dist
+/server/dist
+/client/build
+/server/build
+/server/generated
+/server/node_modules
+/client/node_modules
+# Testing
+coverage/
+.nyc_output/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Prisma
+/server/generated/
+prisma/.env
+
+
+
+

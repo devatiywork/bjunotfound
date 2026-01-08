@@ -1,0 +1,133 @@
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+
+* {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+		'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		sans-serif;
+}
+
+/* .animated-gradient {
+	background: linear-gradient(
+		-45deg,
+		#ff6b6b 0%,
+		#feca57 10%,
+		#48dbfb 20%,
+		#0abde3 30%,
+		#a29bfe 40%,
+		#6c5ce7 50%,
+		#fd79a8 60%,
+		#e17055 70%,
+		#00b894 80%,
+		#00cec9 90%,
+		#ffeaa7 100%
+	);
+	background-size: 300% 300%;
+	animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+	0% {
+		background-position: 0% 50%;
+	}
+	25% {
+		background-position: 50% 100%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	75% {
+		background-position: 50% 0%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.fade-in {
+	animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-slide-in {
+	animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+} */
+
+.animated-gradient {
+	position: relative;
+	min-height: 100vh;
+
+	/* интерактивные переменные */
+	--posX: 0;
+	--posY: 0;
+	--x: calc(var(--posX) * 1px);
+	--y: calc(var(--posY) * 1px);
+
+	background-image: linear-gradient(115deg, rgb(225 255 235), rgb(245 247 255)),
+		radial-gradient(
+			90% 110% at calc(50% + var(--x)) calc(0% + var(--y)),
+			rgb(255 255 255),
+			rgb(30 35 80)
+		),
+		radial-gradient(
+			110% 110% at calc(82% - var(--x)) calc(0% - var(--y)),
+			rgb(155 110 255),
+			rgb(15 10 45)
+		),
+		radial-gradient(
+			160% 220% at calc(100% + var(--x)) calc(0% + var(--y)),
+			rgb(0 210 255),
+			rgb(35 55 255)
+		),
+		radial-gradient(
+			110% 110% at calc(100% - var(--x)) calc(32% - var(--y)),
+			rgb(40 130 255),
+			rgb(0 225 255)
+		),
+		linear-gradient(60deg, rgb(110 80 255), rgb(0 210 255));
+
+	background-blend-mode: overlay, overlay, difference, difference, difference,
+		normal;
+
+	/* чтобы смотрелось “дорого” */
+	background-size: 120% 120%;
+	background-position: center;
+}
+
+/* если нужно чуть “мягче” без потери стиля */
+@media (prefers-reduced-motion: reduce) {
+	.animated-gradient {
+		background-size: 100% 100%;
+	}
+}
+
+/* Скрытие scrollbar для горизонтального скролла */
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
