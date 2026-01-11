@@ -20,17 +20,13 @@ model User {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  weights        Weight[]
-  goals          Goal[]
-  mealPlans      MealPlan[]
-  refreshTokens  RefreshToken[]
-  products       Product[] // продукты, созданные пользователем
-  dishes         Dish[] // блюда, созданные пользователем
-  favoriteDishes FavoriteDish[] // избранные блюда
-  activityLogs   ActivityLog[] // записи активности
-  productPrices  UserProductPrice[] // персональные цены на продукты
-  activityLevel  ActivityLevel      @relation(fields: [activityLevelId], references: [id])
-  role           UserRole           @relation(fields: [roleId], references: [id])
+  weights       Weight[]
+  goals         Goal[]
+  refreshTokens RefreshToken[]
+  activityLogs  ActivityLog[]
+  productsUser  ProductUser[] // пользовательские продукты
+  activityLevel ActivityLevel  @relation(fields: [activityLevelId], references: [id])
+  role          UserRole       @relation(fields: [roleId], references: [id])
 
   @@map("users")
 }
@@ -111,234 +107,10 @@ model Goal {
   @@map("goals")
 }
 
-model Category {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  description String?
-  createdAt   DateTime  @default(now())
-  products    Product[]
-
-  @@map("categories")
-}
-
-model Tag {
-  id        String       @id @default(uuid())
-  name      String       @unique
-  createdAt DateTime     @default(now())
-  products  ProductTag[]
-
-  @@map("tags")
-}
-
-model Product {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-
-  // КБЖУ на 100г
-  calories Float
-  proteins Float
-  fats     Float
-  carbs    Float
-
-  // Дополнительные макросы
-  fiber        Float? // клетчатка на 100г
-  sugar        Float? // сахар на 100г
-  saturatedFat Float? // насыщенные жиры на 100г
-  sodium       Float? // натрий в мг на 100г
-
-  // Порция и единицы измерения
-  servingSize Float? // стандартная порция в граммах/мл
-  unit        UnitType @default(G) // единица измерения
-
-  // Метаданные продукта
-  brand   String? // бренд/производитель
-  barcode String? @unique // штрих-код для сканирования (EAN-13/UPC)
-
-  // Медиа
-  photo String?
-
-  // Модерация и владение
-  isVerified Boolean    @default(false) // проверены ли данные
-  source     DataSource @default(USER) // источник данных
-  userId     String? // создатель продукта (null = системный)
-  isPublic   Boolean    @default(true) // видимость продукта
-
-  // Категория
-  categoryId String
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Связи
-  category        Category           @relation(fields: [categoryId], references: [id])
-  tags            ProductTag[]
-  dishIngredients DishIngredient[] // использование в блюдах
-  mealPlans       MealPlan[]
-  creator         User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userPrices      UserProductPrice[] // персональные цены пользователей
-
-  @@map("products")
-}
-
-model ProductTag {
-  productId String
-  tagId     String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
-  @@id([productId, tagId])
-  @@map("product_tags")
-}
-
-model UserProductPrice {
-  id        String   @id @default(uuid())
-  userId    String
-  productId String
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, productId])
-  @@map("user_product_prices")
-}
-
-model Dish {
-  id          String  @id @default(uuid())
-  name        String
-  description String? @db.Text
-  photo       String?
-
-  // Порции и размер
-  servings    Int    @default(1) // количество порций
-  servingSize Float? // размер одной порции в граммах (опционально)
-
-  // Автоматически рассчитываемые поля (из ингредиентов)
-  totalCalories Float  @default(0)
-  totalProteins Float  @default(0)
-  totalFats     Float  @default(0)
-  totalCarbs    Float  @default(0)
-  totalFiber    Float? // опционально
-  totalSugar    Float? // опционально
-  totalPrice    Float? // опционально
-  totalWeight   Float  @default(0) // общий вес ингредиентов в граммах
-
-  // КБЖУ на порцию (вычисляется = total / servings)
-  caloriesPerServing Float  @default(0)
-  proteinsPerServing Float  @default(0)
-  fatsPerServing     Float  @default(0)
-  carbsPerServing    Float  @default(0)
-  pricePerServing    Float?
-
-  // Метаданные приготовления
-  cookingTimeMinutes Int?
-  difficulty         DifficultyLevel @default(MEDIUM)
-
-  // Категоризация
-  mealType     MealType?
-  cuisineType  CuisineType?
-  dishCategory DishCategory?
-
-  // Модерация и доступ
-  userId     String?
-  isPublic   Boolean    @default(true)
-  isVerified Boolean    @default(false)
-  source     DataSource @default(USER)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Связи
-  creator     User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
-  ingredients DishIngredient[]
-  tags        DishTagRelation[]
-  favorites   FavoriteDish[]
-  mealPlans   MealPlan[]
-
-  @@map("dishes")
-}
-
-model DishIngredient {
-  id        String   @id @default(uuid())
-  dishId    String
-  productId String
-  amount    Float // количество продукта
-  unit      UnitType @default(G) // единица измерения
-
-  dish    Dish    @relation(fields: [dishId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-
-  @@unique([dishId, productId]) // один продукт один раз в блюде
-  @@map("dish_ingredients")
-}
-
-model DishTag {
-  id        String       @id @default(uuid())
-  name      String       @unique
-  category  TagCategory? // группировка тегов
-  createdAt DateTime     @default(now())
-
-  dishes DishTagRelation[]
-
-  @@map("dish_tags")
-}
-
-model DishTagRelation {
-  dishId String
-  tagId  String
-
-  dish Dish    @relation(fields: [dishId], references: [id], onDelete: Cascade)
-  tag  DishTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
-  @@id([dishId, tagId])
-  @@map("dish_tag_relations")
-}
-
-model FavoriteDish {
-  userId  String
-  dishId  String
-  addedAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dish Dish @relation(fields: [dishId], references: [id], onDelete: Cascade)
-
-  @@id([userId, dishId])
-  @@map("favorite_dishes")
-}
-
-model MealPlan {
-  id        String   @id @default(uuid())
-  userId    String
-  date      DateTime
-  mealType  MealType
-  dishId    String?
-  productId String?
-  amount    Float
-  isEaten   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  dish      Dish?    @relation(fields: [dishId], references: [id])
-  product   Product? @relation(fields: [productId], references: [id])
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("meal_plans")
-}
-
 enum Gender {
   MALE
   FEMALE
   OTHER
-}
-
-enum MealType {
-  BREAKFAST
-  LUNCH
-  DINNER
-  SNACK
 }
 
 enum GoalStatus {
@@ -350,63 +122,6 @@ enum GoalStatus {
 enum FormulaType {
   MIFFLIN_ST_JEOR // Миффлина-Сан Жеора (рекомендуется)
   HARRIS_BENEDICT
-}
-
-enum UnitType {
-  G // граммы
-  ML // миллилитры
-  PIECE // штуки
-  PORTION // порции
-}
-
-enum DataSource {
-  ADMIN // добавлено администратором
-  USER // добавлено пользователем
-  API // импортировано из внешнего API
-  IMPORT // массовый импорт
-}
-
-enum CuisineType {
-  RUSSIAN
-  ITALIAN
-  ASIAN
-  MEXICAN
-  FRENCH
-  JAPANESE
-  AMERICAN
-  INDIAN
-  MEDITERRANEAN
-  MIDDLE_EASTERN
-  OTHER
-}
-
-enum DishCategory {
-  MAIN_COURSE // основное блюдо
-  SOUP // суп
-  SALAD // салат
-  SIDE_DISH // гарнир
-  DESSERT // десерт
-  BEVERAGE // напиток
-  APPETIZER // закуска
-  BREAKFAST // завтрак
-  SAUCE // соус
-  OTHER
-}
-
-enum DifficultyLevel {
-  EASY // простое
-  MEDIUM // среднее
-  HARD // сложное
-}
-
-enum TagCategory {
-  DIETARY // диетические
-  MEAL_TIME // время приема
-  COOKING_TIME // время готовки
-  DIFFICULTY // сложность
-  CUISINE // кухня
-  OCCASION // повод
-  SPECIAL // особые
 }
 
 model ActivityLog {
@@ -448,4 +163,201 @@ enum ActivityType {
   FAST_WALKING // быстрая ходьба (~0.06 ккал/шаг/кг)
   RUNNING // бег (~0.09 ккал/шаг/кг)
   CUSTOM // пользовательская активность
+}
+
+// ============================================
+// НОВАЯ СИСТЕМА ПРОДУКТОВ
+// ============================================
+
+enum Language {
+  RU
+  EN
+  UK
+  ES
+  FR
+  DE
+}
+
+enum Currency {
+  RUB
+  USD
+  EUR
+  UAH
+  KZT
+}
+
+// 1. Категории продуктов (справочник, заполняется админом)
+model Category {
+  id        String   @id @default(uuid())
+  parentId  String? // для дерева категорий
+  name      String // название категории
+  slug      String   @unique // строковый ключ для URL
+  photos    String[] @default([]) // фотографии категории (массив URL)
+  isActive  Boolean  @default(true) // включена ли категория
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent         Category?       @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children       Category[]      @relation("CategoryTree")
+  productsGlobal ProductGlobal[]
+  productsUser   ProductUser[]
+
+  @@map("categories")
+}
+
+// 2. Бренды (справочник)
+model Brand {
+  id             String   @id @default(uuid())
+  name           String // отображаемое имя
+  normalizedName String   @unique // для дедупликации (lowercase, no spaces)
+  country        String? // страна бренда
+  photos         String[] @default([]) // логотипы/фото бренда (массив URL)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productsGlobal ProductGlobal[]
+  productsUser   ProductUser[]
+
+  @@map("brands")
+}
+
+// 3. Глобальный продукт (канонический, общий для всех)
+model ProductGlobal {
+  id         String   @id @default(uuid())
+  barcode    String?  @unique // штрихкод EAN/UPC (nullable для развесных)
+  categoryId String
+  brandId    String?
+  country    String? // страна происхождения
+  photos     String[] @default([]) // фотографии продукта (массив URL)
+  isVerified Boolean  @default(false) // подтверждён модерацией/AI
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category  Category               @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  brand     Brand?                 @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  names     ProductGlobalI18n[] // названия на разных языках
+  nutrition NutritionGlobalPer100? // БЖУ на 100г
+  usersRefs ProductUser[] // ссылки от пользовательских продуктов
+
+  @@map("products_global")
+}
+
+// 4. Названия глобального продукта на разных языках
+model ProductGlobalI18n {
+  id              String   @id @default(uuid())
+  productGlobalId String
+  lang            Language // язык
+  name            String // название на этом языке
+
+  productGlobal ProductGlobal @relation(fields: [productGlobalId], references: [id], onDelete: Cascade)
+
+  @@unique([productGlobalId, lang]) // один язык = одно название
+  @@map("products_global_i18n")
+}
+
+// 5. Пищевая ценность глобального продукта (на 100г)
+model NutritionGlobalPer100 {
+  productGlobalId String   @id // PK и FK одновременно (связь 1:1)
+  caloriesKcal    Float // калории на 100г
+  proteinsG       Float // белки на 100г
+  fatsG           Float // жиры на 100г
+  carbohydratesG  Float // углеводы на 100г
+  sugarsG         Float? // сахара
+  fiberG          Float? // клетчатка
+  saltG           Float? // соль
+  updatedAt       DateTime @updatedAt
+
+  productGlobal ProductGlobal @relation(fields: [productGlobalId], references: [id], onDelete: Cascade)
+
+  @@map("nutrition_global_per_100")
+}
+
+// 6. Пользовательский продукт (личная карточка)
+model ProductUser {
+  id              String   @id @default(uuid())
+  userId          String // владелец продукта
+  productGlobalId String? // связь с глобальным продуктом (если найден)
+  barcode         String? // штрихкод (если введён, но global ещё не создан)
+  categoryId      String?
+  brandId         String?
+  photos          String[] @default([]) // фотографии продукта (массив URL)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productGlobal ProductGlobal?       @relation(fields: [productGlobalId], references: [id], onDelete: SetNull)
+  category      Category?            @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brand         Brand?               @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  names         ProductUserI18n[] // названия с языком ввода
+  nutrition     NutritionUserPer100? // БЖУ на 100г
+  packages      ProductUserPackage[] // покупки/упаковки
+  servings      ProductUserServing[] // порции
+
+  @@map("products_user")
+}
+
+// 7. Названия пользовательского продукта + язык ввода
+model ProductUserI18n {
+  id            String   @id @default(uuid())
+  productUserId String
+  lang          Language // язык (определяется автоматически)
+  name          String // название, введённое пользователем
+
+  productUser ProductUser @relation(fields: [productUserId], references: [id], onDelete: Cascade)
+
+  @@unique([productUserId, lang]) // один язык = одно название
+  @@map("products_user_i18n")
+}
+
+// 8. Пищевая ценность пользовательского продукта (на 100г)
+model NutritionUserPer100 {
+  productUserId  String   @id // PK и FK одновременно (связь 1:1)
+  caloriesKcal   Float // калории на 100г
+  proteinsG      Float // белки на 100г
+  fatsG          Float // жиры на 100г
+  carbohydratesG Float // углеводы на 100г
+  sugarsG        Float? // сахара
+  fiberG         Float? // клетчатка
+  saltG          Float? // соль
+  updatedAt      DateTime @updatedAt
+
+  productUser ProductUser @relation(fields: [productUserId], references: [id], onDelete: Cascade)
+
+  @@map("nutrition_user_per_100")
+}
+
+// 9. Упаковки/покупки (история покупок продукта)
+model ProductUserPackage {
+  id            String    @id @default(uuid())
+  productUserId String
+  totalWeightG  Float? // общий вес упаковки в граммах
+  totalVolumeMl Float? // общий объём в миллилитрах
+  priceTotal    Float // цена за упаковку
+  currency      Currency // валюта
+  purchasedAt   DateTime? // когда купил
+  store         String? // магазин
+  note          String? // заметка
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  productUser ProductUser @relation(fields: [productUserId], references: [id], onDelete: Cascade)
+
+  @@map("product_user_packages")
+}
+
+// 10. Порции (пользовательские размеры порций)
+model ProductUserServing {
+  id            String   @id @default(uuid())
+  productUserId String
+  name          String // название порции ("ломтик", "яйцо", "ложка")
+  amountUnits   Float    @default(1) // количество штук в порции
+  weightG       Float? // сколько грамм в сумме
+  volumeMl      Float? // сколько мл (если жидкость)
+  isDefault     Boolean  @default(false) // порция по умолчанию
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  productUser ProductUser @relation(fields: [productUserId], references: [id], onDelete: Cascade)
+
+  @@map("product_user_servings")
 }

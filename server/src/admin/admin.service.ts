@@ -114,7 +114,6 @@ export class AdminService {
           select: {
             weights: true,
             goals: true,
-            mealPlans: true,
           },
         },
       },

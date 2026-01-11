@@ -5,7 +5,6 @@ import {
 	GoalsPage,
 	HomePage,
 	LoginPage,
-	Products,
 	ProfilePage,
 	RegisterPage,
 } from '../pages/index.ts'
@@ -56,14 +55,6 @@ export const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<GoalsPage />
-					</ProtectedRoute>
-				),
-			},
-			{
-				path: 'products',
-				element: (
-					<ProtectedRoute>
-						<Products />
 					</ProtectedRoute>
 				),
 			},

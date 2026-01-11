@@ -1,13 +1,4 @@
-import {
-	Activity,
-	Apple,
-	Home,
-	LogOut,
-	Menu,
-	Target,
-	User,
-	X,
-} from 'lucide-react'
+import { Activity, Home, LogOut, Menu, Target, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../../api'
@@ -89,14 +80,6 @@ export const Header = () => {
 						>
 							<Activity className='h-4 w-4' />
 							<span>Активность</span>
-						</button>
-
-						<button
-							onClick={() => navigate('/app/products')}
-							className='flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
-						>
-							<Apple className='h-4 w-4' />
-							<span>Продукты и Блюда</span>
 						</button>
 
 						<button
@@ -197,14 +180,6 @@ export const Header = () => {
 						>
 							<Activity className='h-5 w-5' />
 							<span>Активность</span>
-						</button>
-
-						<button
-							onClick={() => navigateAndClose('/app/products')}
-							className='flex items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-						>
-							<Apple className='h-5 w-5' />
-							<span>Продукты</span>
 						</button>
 
 						<button

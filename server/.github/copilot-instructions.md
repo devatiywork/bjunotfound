@@ -118,90 +118,10 @@
 - `POST /users/weight` - просто добавляет вес, статусы НЕ обновляются
 - `DELETE /users/weight/:id` - просто удаляет вес, статусы НЕ обновляются
 
-### 3. Система продуктов и блюд
-
-#### **Продукты питания ✅ РЕАЛИЗОВАНО**
-
-**Реализованный функционал:**
-
-- CRUD операции для продуктов с полной валидацией
-- Базовые поля: название, описание, КБЖУ (калории, белки, жиры, углеводы на 100г)
-- Дополнительные макросы: клетчатка, сахар, насыщенные жиры, натрий
-- Порция и единицы измерения: `servingSize`, `unit` (G, ML, PIECE, PORTION)
-- Метаданные: бренд, штрих-код (barcode), фото, цена
-- Модерация контента: `isVerified`, `source` (ADMIN/USER/API/IMPORT), `userId`, `isPublic`
-- Категории и теги (many-to-many связи)
-- Поиск по штрих-коду для сканирования через камеру
-- Продвинутая фильтрация: по категориям, тегам, калориям, цене, источнику
-- Пагинация и сортировка результатов
-- Публичные продукты + личные продукты пользователя
-
-**Структура:**
-
-- `src/products/` - модуль продуктов
-- `src/products/swagger/products.swagger.ts` - Swagger документация
-- `src/categories/` - модуль категорий
-- `src/tags/` - модуль тегов
-- `prisma/schema.prisma` - модели Product, Category, Tag, ProductTag
-- Enums: `UnitType` (G, ML, PIECE, PORTION), `DataSource` (ADMIN, USER, API, IMPORT)
-
-**Авторизация:**
-
-- Публичные endpoints: `GET /products`, `GET /products/:id`, `GET /products/barcode/:barcode`
-- Защищенные endpoints: `POST /products` (любой пользователь)
-- Только admin: `PATCH /products/:id`, `DELETE /products/:id` (для чужих продуктов), `GET /products/stats`
-
-**Seed данные:**
-
-- 16 предзаполненных категорий (Мясо, Рыба, Молочные, Овощи, Фрукты и т.д.)
-- 18 тегов (Высокобелковое, Низкоуглеводное, Вегетарианское, Безглютеновое и т.д.)
-
-#### **Блюда ✅ РЕАЛИЗОВАНО**
-
-**Реализованный функционал:**
-
-- CRUD операции для блюд с автоматическим расчетом КБЖУ из ингредиентов
-- Автоматический расчет суммарных значений: totalCalories, totalProteins, totalFats, totalCarbs, totalFiber, totalSugar, totalPrice, totalWeight
-- Автоматический расчет на порцию: caloriesPerServing, proteinsPerServing, fatsPerServing, carbsPerServing, pricePerServing
-- Система ингредиентов: связь many-to-many с продуктами через DishIngredient (amount, unit)
-- Гибкая система тегов блюд с категориями (Dietary, Meal Time, Cooking Time, Difficulty, Cuisine, Occasion, Special)
-- Избранные блюда: пользователи могут добавлять блюда в избранное
-- Модерация контента: isVerified, source (ADMIN/USER/API/IMPORT), userId, isPublic
-- Метаданные: servings, servingSize, cookingTimeMinutes, difficulty, mealType, cuisineType, dishCategory
-- Пересчет КБЖУ: endpoint для пересчета при изменении данных продуктов
-- Продвинутая фильтрация: по тегам, типу приема пищи, кухне, категории, сложности, калориям, времени приготовления, цене
-- Пагинация и сортировка результатов
-- Публичные блюда + личные блюда пользователя
-
-**Структура:**
-
-- `src/dishes/` - модуль блюд
-- `src/dishes/swagger/dishes.swagger.ts` - Swagger документация
-- `src/dish-tags/` - модуль тегов блюд (CRUD с admin-защитой)
-- `prisma/schema.prisma` - модели Dish, DishIngredient, DishTag, DishTagRelation, FavoriteDish
-- Enums: `MealType` (5 типов), `CuisineType` (11 типов), `DishCategory` (10 категорий), `DifficultyLevel` (EASY, MEDIUM, HARD), `TagCategory` (7 категорий)
-
-**Авторизация:**
-
-- Публичные endpoints: `GET /dishes`, `GET /dishes/:id`
-- Защищенные endpoints: `POST /dishes` (любой пользователь), `POST /dishes/upload-photo`, `GET /dishes/favorites`, `POST /dishes/:id/favorite`, `DELETE /dishes/:id/favorite`
-- Только создатель или admin: `PATCH /dishes/:id`, `DELETE /dishes/:id`, `POST /dishes/:id/recalculate`
-
-**Seed данные:**
-
-- 40 тегов блюд по 7 категориям:
-  - Dietary (8): Вегетарианское, Веганское, Безглютеновое, Кето, Высокобелковое и т.д.
-  - Meal Time (5): Завтрак, Обед, Ужин, Перекус, Поздний ужин
-  - Cooking Time (3): Быстрое (до 15 мин), Среднее (15-45 мин), Долгое (45+ мин)
-  - Difficulty (3): Простое, Средней сложности, Сложное
-  - Cuisine (10): Русская, Итальянская, Азиатская, Японская и т.д.
-  - Occasion (5): На каждый день, Праздничное, Для гостей, Детское меню, Романтический ужин
-  - Special (6): Подходит для заморозки, Одна сковорода, Бюджетное, Meal prep и т.д.
-
-### 4. Планирование питания - TODO
+### 3. Планирование питания - TODO
 
 - Планирование на неделю/месяц
-- Привязка блюд/продуктов к конкретным датам и приемам пищи (завтрак, обед, ужин, перекус)
+- Привязка к конкретным датам и приемам пищи (завтрак, обед, ужин, перекус)
 - Отслеживание фактического потребления (флаг `isEaten`)
 - Автоматический подсчет КБЖУ за день/неделю
 
@@ -285,46 +205,6 @@ JWT_REFRESH_EXPIRATION=7d
 
 **Документация:** см. [src/users/requests.md](src/users/requests.md)
 
-### Products Module (src/products/) ✅ РЕАЛИЗОВАНО
-
-**Эндпоинты:**
-
-- `POST /products` - создать продукт (требует авторизации, админ создает верифицированные)
-- `POST /products/upload-photo` - загрузить фото в Cloudinary (требует авторизации) ✅ НОВОЕ
-- `GET /products` - список продуктов с пагинацией и фильтрами (публичный)
-- `GET /products/:id` - получить продукт по ID (публичный)
-- `GET /products/barcode/:barcode` - найти по штрих-коду (публичный)
-- `PATCH /products/:id` - обновить продукт (админ или создатель)
-- `DELETE /products/:id` - удалить продукт (админ или создатель)
-- `GET /products/stats` - статистика (только админ)
-
-**Компоненты:**
-
-- `ProductsService` - CRUD, фильтрация, поиск, валидация прав доступа
-- `ProductsController` - REST endpoints с авторизацией
-- DTOs: `CreateProductDto`, `UpdateProductDto`, `FilterProductsDto` с валидацией
-- `ProductsSwaggerDocs` - полная Swagger документация
-
-**Особенности:**
-
-- Штрих-код для сканирования: уникальное поле `barcode` (EAN-13/UPC)
-- Модерация: `isVerified`, `source` (ADMIN/USER/API/IMPORT)
-- Доступ: публичные продукты + личные продукты пользователя
-- Фильтрация: по категориям, тегам, калориям, цене, источнику, верификации
-- Пагинация: page, limit (макс 100), sortBy, sortOrder
-- **Загрузка фото:** интеграция с Cloudinary через `FileUploadModule` ✅ НОВОЕ
-- **Персональные цены:** Каждый пользователь может устанавливать свою цену для продукта через таблицу `UserProductPrice` ✅ РЕАЛИЗОВАНО
-
-**Система персональных цен:**
-
-- Модель `UserProductPrice`: хранит цены пользователей для продуктов (userId, productId, price)
-- Уникальный индекс на `[userId, productId]` - один пользователь = одна цена на продукт
-- API возвращает `price: null` если пользователь не установил цену
-- Фильтрация по цене (`minPrice`, `maxPrice`) работает только с установленными ценами пользователя
-- При создании/обновлении продукта: цена извлекается из DTO и сохраняется в `UserProductPrice`
-- При удалении пользователя: все его цены удаляются каскадно (`onDelete: Cascade`)
-- При удалении продукта: все цены для этого продукта удаляются каскадно (`onDelete: Cascade`)
-
 ### FileUpload Module (src/file-upload/) ✅ РЕАЛИЗОВАНО
 
 **Модуль для работы с загрузкой изображений через Cloudinary:**
@@ -337,7 +217,7 @@ JWT_REFRESH_EXPIRATION=7d
 
 **Функциональность:**
 
-- Загрузка изображений в Cloudinary (папка `products/`)
+- Загрузка изображений в Cloudinary (настраиваемая папка)
 - Валидация формата: JPEG, PNG, WebP
 - Валидация размера: макс 5MB
 - Автоматическая оптимизация: resize до 800x800px, quality auto, format auto (WebP)
@@ -354,39 +234,9 @@ CLOUDINARY_API_SECRET=your-api-secret
 
 **Использование:**
 
-1. Загрузка через `POST /products/upload-photo` с `multipart/form-data`
+1. Загрузка через upload endpoint с `multipart/form-data`
 2. Получение URL из ответа
-3. Использование URL в поле `photo` продукта
-
-### Categories Module (src/categories/) ✅ РЕАЛИЗОВАНО
-
-**Эндпоинты:**
-
-- `POST /categories` - создать категорию (только админ)
-- `GET /categories` - список категорий (публичный)
-- `GET /categories/:id` - получить категорию (публичный)
-- `PATCH /categories/:id` - обновить категорию (только админ)
-- `DELETE /categories/:id` - удалить категорию (только админ, если нет продуктов)
-
-**Компоненты:**
-
-- `CategoriesService` - CRUD, проверка уникальности имени, защита от удаления с продуктами
-- `CategoriesController` - REST endpoints
-
-### Tags Module (src/tags/) ✅ РЕАЛИЗОВАНО
-
-**Эндпоинты:**
-
-- `POST /tags` - создать тег (только админ)
-- `GET /tags` - список тегов (публичный)
-- `GET /tags/:id` - получить тег (публичный)
-- `PATCH /tags/:id` - обновить тег (только админ)
-- `DELETE /tags/:id` - удалить тег (только админ, если нет продуктов)
-
-**Компоненты:**
-
-- `TagsService` - CRUD, проверка уникальности имени, защита от удаления с продуктами
-- `TagsController` - REST endpoints
+3. Использование URL в поле `photo` соответствующей модели
 
 ### Admin Module (src/admin/) ✅ РЕАЛИЗОВАНО
 
@@ -432,55 +282,6 @@ CLOUDINARY_API_SECRET=your-api-secret
 
 - [src/admin/admin-users-api.md](src/admin/admin-users-api.md) - документация по управлению пользователями
 - [src/admin/calorie-settings-api.md](src/admin/calorie-settings-api.md) - документация по настройкам калорий
-
-### Dishes Module (src/dishes/) ✅ РЕАЛИЗОВАНО
-
-**Эндпоинты:**
-
-- `POST /dishes` - создать блюдо (требует авторизации, админ создает верифицированные)
-- `POST /dishes/upload-photo` - загрузить фото в Cloudinary (требует авторизации)
-- `GET /dishes` - список блюд с пагинацией и фильтрами (публичный)
-- `GET /dishes/:id` - получить блюдо по ID (публичный с контролем доступа)
-- `GET /dishes/favorites` - получить избранные блюда (требует авторизации)
-- `PATCH /dishes/:id` - обновить блюдо (админ или создатель)
-- `DELETE /dishes/:id` - удалить блюдо (админ или создатель)
-- `POST /dishes/:id/recalculate` - пересчитать КБЖУ (админ или создатель)
-- `POST /dishes/:id/favorite` - добавить в избранное (требует авторизации)
-- `DELETE /dishes/:id/favorite` - удалить из избранного (требует авторизации)
-
-**Компоненты:**
-
-- `DishesService` - CRUD, автоматический расчет КБЖУ из ингредиентов, управление избранным
-- `DishesController` - REST endpoints с авторизацией и Swagger документацией
-- DTOs: `CreateDishDto`, `UpdateDishDto`, `FilterDishesDto`, `AddIngredientDto` с валидацией
-- `DishesSwaggerDocs` - полная Swagger документация
-
-**Особенности:**
-
-- **Автоматический расчет КБЖУ:** calculateNutrition() суммирует калории/белки/жиры/углеводы из ингредиентов (пропорционально весу)
-- **Персональные цены в блюдах:** calculateNutrition() запрашивает UserProductPrice для каждого ингредиента; если хотя бы у одного ингредиента нет цены - totalPrice = null
-- **Расчет на порцию:** все итоговые значения делятся на servings для получения \*PerServing полей
-- **Хранение цен в БД:** totalPrice и pricePerServing рассчитываются при создании/обновлении блюда и сохраняются в БД (не рассчитываются на лету)
-- **Модерация:** isVerified, source (ADMIN/USER/API/IMPORT)
-- **Доступ:** публичные блюда + личные блюда пользователя
-- **Фильтрация:** по тегам, типу приема пищи, кухне, категории, сложности, калориям, времени приготовления, цене
-- **Пагинация:** page, limit (макс 100), sortBy, sortOrder
-- **Загрузка фото:** интеграция с Cloudinary через FileUploadModule
-
-### DishTags Module (src/dish-tags/) ✅ РЕАЛИЗОВАНО
-
-**Эндпоинты:**
-
-- `POST /dish-tags` - создать тег (только админ)
-- `GET /dish-tags` - список тегов (публичный)
-- `GET /dish-tags/:id` - получить тег (публичный)
-- `PATCH /dish-tags/:id` - обновить тег (только админ)
-- `DELETE /dish-tags/:id` - удалить тег (только админ, если нет блюд)
-
-**Компоненты:**
-
-- `DishTagsService` - CRUD, проверка уникальности имени, защита от удаления с блюдами
-- `DishTagsController` - REST endpoints
 
 ### Prisma Module (src/prisma/)
 
@@ -554,11 +355,11 @@ npm run format       # Форматирование Prettier
 
 ```typescript
 @Injectable()
-export class ProductService {
+export class GoalsService {
   constructor(private prisma: PrismaService) {}
 
-  async calculateDishNutrition(dishId: string) {
-    // Логика расчета КБЖУ блюда
+  async calculateTargetCalories(userId: string) {
+    // Логика расчета целевых калорий
   }
 }
 ```
@@ -575,24 +376,19 @@ export class ProductService {
 
 ```
 src/
-  products/                           ← Модуль
+  users/                              ← Модуль
     services/                         ← Папка всех сервисов
-      create/
-        create-product.service.ts     ← Сервис создания
-      find-all/
-        find-all-products.service.ts  ← Сервис получения списка
-      find-one/
-        find-one-product.service.ts   ← Сервис получения по ID
-      update/
-        update-product.service.ts     ← Сервис обновления
-      remove/
-        remove-product.service.ts     ← Сервис удаления
+      profile/
+        get-profile.service.ts        ← Сервис получения профиля
+      weight/
+        add-weight.service.ts         ← Сервис добавления веса
+        get-weight-history.service.ts ← Сервис истории веса
       index.ts                        ← Экспорт всех сервисов
     dto/                              ← DTO
     swagger/                          ← Swagger документация
-    products.service.ts               ← Главный сервис-координатор
-    products.controller.ts            ← REST endpoints
-    products.module.ts                ← Модуль с регистрацией
+    users.service.ts                  ← Главный сервис-координатор
+    users.controller.ts               ← REST endpoints
+    users.module.ts                   ← Модуль с регистрацией
 ```
 
 **Главный сервис (координатор):**
@@ -600,41 +396,29 @@ src/
 ```typescript
 import { Injectable } from '@nestjs/common';
 import {
-  CreateProductService,
-  FindAllProductsService,
-  FindOneProductService,
-  UpdateProductService,
-  RemoveProductService,
+  AddWeightService,
+  GetWeightHistoryService,
+  GetLatestWeightService,
 } from './services';
 
 @Injectable()
-export class ProductsService {
+export class UsersService {
   constructor(
-    private createProductService: CreateProductService,
-    private findAllProductsService: FindAllProductsService,
-    private findOneProductService: FindOneProductService,
-    private updateProductService: UpdateProductService,
-    private removeProductService: RemoveProductService,
+    private addWeightService: AddWeightService,
+    private getWeightHistoryService: GetWeightHistoryService,
+    private getLatestWeightService: GetLatestWeightService,
   ) {}
 
-  async create(dto: CreateProductDto) {
-    return this.createProductService.execute(dto);
+  async addWeight(userId: string, dto: AddWeightDto) {
+    return this.addWeightService.execute(userId, dto);
   }
 
-  async findAll(filters: FilterDto) {
-    return this.findAllProductsService.execute(filters);
+  async getWeightHistory(userId: string) {
+    return this.getWeightHistoryService.execute(userId);
   }
 
-  async findOne(id: string) {
-    return this.findOneProductService.execute(id);
-  }
-
-  async update(id: string, dto: UpdateProductDto) {
-    return this.updateProductService.execute(id, dto);
-  }
-
-  async remove(id: string) {
-    return this.removeProductService.execute(id);
+  async getLatestWeight(userId: string) {
+    return this.getLatestWeightService.execute(userId);
   }
 }
 ```
@@ -646,12 +430,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
-export class CreateProductService {
+export class AddWeightService {
   constructor(private prisma: PrismaService) {}
 
-  async execute(dto: CreateProductDto) {
-    // Вся логика создания продукта
-    return this.prisma.product.create({ data: dto });
+  async execute(userId: string, dto: AddWeightDto) {
+    // Вся логика добавления веса
+    return this.prisma.weight.create({
+      data: { userId, ...dto },
+    });
   }
 }
 ```
@@ -659,40 +445,34 @@ export class CreateProductService {
 **services/index.ts (экспорт):**
 
 ```typescript
-export { CreateProductService } from './create/create-product.service';
-export { FindAllProductsService } from './find-all/find-all-products.service';
-export { FindOneProductService } from './find-one/find-one-product.service';
-export { UpdateProductService } from './update/update-product.service';
-export { RemoveProductService } from './remove/remove-product.service';
+export { AddWeightService } from './weight/add-weight.service';
+export { GetWeightHistoryService } from './weight/get-weight-history.service';
+export { GetLatestWeightService } from './weight/get-latest-weight.service';
 ```
 
 **Регистрация в модуле:**
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 import {
-  CreateProductService,
-  FindAllProductsService,
-  FindOneProductService,
-  UpdateProductService,
-  RemoveProductService,
+  AddWeightService,
+  GetWeightHistoryService,
+  GetLatestWeightService,
 } from './services';
 
 @Module({
-  controllers: [ProductsController],
+  controllers: [UsersController],
   providers: [
-    ProductsService,
-    CreateProductService,
-    FindAllProductsService,
-    FindOneProductService,
-    UpdateProductService,
-    RemoveProductService,
+    UsersService,
+    AddWeightService,
+    GetWeightHistoryService,
+    GetLatestWeightService,
   ],
-  exports: [ProductsService],
+  exports: [UsersService],
 })
-export class ProductsModule {}
+export class UsersModule {}
 ```
 
 **Преимущества архитектуры:**
@@ -706,7 +486,6 @@ export class ProductsModule {}
 
 **Реализованные примеры:**
 
-- ✅ `src/products/` - полностью переведен на новую архитектуру (7 сервисов)
 - ✅ `src/users/` - полностью переведен на новую архитектуру (13 сервисов)
 
 **При создании нового модуля:**
