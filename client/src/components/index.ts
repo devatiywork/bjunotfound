@@ -1,4 +1,5 @@
 export { CollapsibleSection } from './collapsible-section/index.ts'
+export { ConfirmModal } from './confirm-modal/index.ts'
 export { DatePicker } from './date-picker/index.ts'
 export { Header } from './header/index.ts'
 export { Input } from './input/index.ts'

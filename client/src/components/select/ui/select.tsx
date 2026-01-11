@@ -1,5 +1,6 @@
 import { Check, ChevronDown, Search, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 interface SelectOption {
 	value: string
@@ -37,6 +38,11 @@ export const Select = ({
 	const [searchQuery, setSearchQuery] = useState('')
 	const [highlightedIndex, setHighlightedIndex] = useState(-1)
 	const [openUpward, setOpenUpward] = useState(false)
+	const [dropdownPosition, setDropdownPosition] = useState({
+		top: 0,
+		left: 0,
+		width: 0,
+	})
 	const containerRef = useRef<HTMLDivElement>(null)
 	const searchInputRef = useRef<HTMLInputElement>(null)
 	const dropdownRef = useRef<HTMLDivElement>(null)
@@ -56,7 +62,9 @@ export const Select = ({
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
 				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
+				!containerRef.current.contains(event.target as Node) &&
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
 			) {
 				setIsOpen(false)
 				setSearchQuery('')
@@ -74,7 +82,7 @@ export const Select = ({
 		}
 	}, [isOpen, searchable])
 
-	// Определение направления открытия dropdown
+	// Определение направления открытия dropdown и его позиции
 	useEffect(() => {
 		if (isOpen && containerRef.current) {
 			const rect = containerRef.current.getBoundingClientRect()
@@ -83,11 +91,16 @@ export const Select = ({
 			const dropdownHeight = 250 // Максимальная высота dropdown
 
 			// Если внизу меньше места, чем вверху - открываем вверх
-			if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
-				setOpenUpward(true)
-			} else {
-				setOpenUpward(false)
-			}
+			const shouldOpenUpward =
+				spaceBelow < dropdownHeight && spaceAbove > spaceBelow
+			setOpenUpward(shouldOpenUpward)
+
+			// Устанавливаем позицию dropdown
+			setDropdownPosition({
+				top: shouldOpenUpward ? rect.top - 8 : rect.bottom + 8,
+				left: rect.left,
+				width: rect.width,
+			})
 		}
 	}, [isOpen])
 
@@ -232,31 +245,36 @@ export const Select = ({
 					</div>
 				</button>
 
-				{/* Dropdown */}
-				{isOpen && (
-					<div
-						ref={dropdownRef}
-						className={`absolute z-50 w-full
-							${openUpward ? 'bottom-full mb-2' : 'top-full mt-2'}
-							bg-white dark:bg-gray-800
-							border border-gray-200 dark:border-gray-700
-							rounded-lg shadow-lg
-							max-h-60 overflow-hidden
-							transition-opacity duration-75`}
-						role='listbox'
-					>
-						{/* Search Input */}
-						{searchable && (
-							<div className='p-2 border-b border-gray-200 dark:border-gray-700'>
-								<div className='relative'>
-									<Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
-									<input
-										ref={searchInputRef}
-										type='text'
-										value={searchQuery}
-										onChange={e => setSearchQuery(e.target.value)}
-										placeholder='Поиск...'
-										className='
+				{/* Dropdown через Portal */}
+				{isOpen &&
+					createPortal(
+						<div
+							ref={dropdownRef}
+							style={{
+								position: 'fixed',
+								top: openUpward
+									? `${dropdownPosition.top}px`
+									: `${dropdownPosition.top}px`,
+								left: `${dropdownPosition.left}px`,
+								width: `${dropdownPosition.width}px`,
+								transform: openUpward ? 'translateY(-100%)' : 'none',
+								zIndex: 9999,
+							}}
+							className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-hidden'
+							role='listbox'
+						>
+							{/* Search Input */}
+							{searchable && (
+								<div className='p-2 border-b border-gray-200 dark:border-gray-700'>
+									<div className='relative'>
+										<Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+										<input
+											ref={searchInputRef}
+											type='text'
+											value={searchQuery}
+											onChange={e => setSearchQuery(e.target.value)}
+											placeholder='Поиск...'
+											className='
 											w-full pl-9 pr-3 py-2 text-sm
 											bg-gray-50 dark:bg-gray-700
 											border border-gray-300 dark:border-gray-600
@@ -265,30 +283,30 @@ export const Select = ({
 											placeholder-gray-500 dark:placeholder-gray-400
 											focus:outline-none focus:ring-2 focus:ring-blue-500/20
 										'
-										onClick={e => e.stopPropagation()}
-									/>
+											onClick={e => e.stopPropagation()}
+										/>
+									</div>
 								</div>
-							</div>
-						)}
+							)}
 
-						{/* Options List */}
-						<div className='overflow-y-auto max-h-48 py-1'>
-							{filteredOptions.length === 0 ? (
-								<div className='px-4 py-3 text-sm text-center text-gray-500 dark:text-gray-400'>
-									Ничего не найдено
-								</div>
-							) : (
-								filteredOptions.map((option, index) => {
-									const isSelected = option.value === value
-									const isHighlighted = index === highlightedIndex
+							{/* Options List */}
+							<div className='overflow-y-auto max-h-48 py-1'>
+								{filteredOptions.length === 0 ? (
+									<div className='px-4 py-3 text-sm text-center text-gray-500 dark:text-gray-400'>
+										Ничего не найдено
+									</div>
+								) : (
+									filteredOptions.map((option, index) => {
+										const isSelected = option.value === value
+										const isHighlighted = index === highlightedIndex
 
-									return (
-										<button
-											key={option.value}
-											type='button'
-											onClick={() => handleSelect(option.value)}
-											onMouseEnter={() => setHighlightedIndex(index)}
-											className={`
+										return (
+											<button
+												key={option.value}
+												type='button'
+												onClick={() => handleSelect(option.value)}
+												onMouseEnter={() => setHighlightedIndex(index)}
+												className={`
 												w-full px-4 py-2.5 text-left text-sm
 												flex items-center justify-between gap-2
 												transition-colors duration-150
@@ -303,20 +321,21 @@ export const Select = ({
 														: 'text-gray-900 dark:text-white'
 												}
 											`}
-											role='option'
-											aria-selected={isSelected}
-										>
-											<span className='flex-1 truncate'>{option.label}</span>
-											{isSelected && (
-												<Check className='w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400' />
-											)}
-										</button>
-									)
-								})
-							)}
-						</div>
-					</div>
-				)}
+												role='option'
+												aria-selected={isSelected}
+											>
+												<span className='flex-1 truncate'>{option.label}</span>
+												{isSelected && (
+													<Check className='w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400' />
+												)}
+											</button>
+										)
+									})
+								)}
+							</div>
+						</div>,
+						document.body
+					)}
 			</div>
 
 			{/* Error Message */}

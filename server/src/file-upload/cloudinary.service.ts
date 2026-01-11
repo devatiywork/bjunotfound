@@ -11,11 +11,13 @@ export class CloudinaryService {
   /**
    * Загружает файл в Cloudinary
    * @param file - Файл из multer
+   * @param folder - Папка в Cloudinary (по умолчанию 'products')
    * @returns URL загруженного изображения
    */
   async uploadImage(
     file: Express.Multer.File,
-  ): Promise<{ url: string; publicId: string }> {
+    folder: string = 'products',
+  ): Promise<string> {
     // Валидация типа файла
     const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedMimeTypes.includes(file.mimetype)) {
@@ -35,7 +37,7 @@ export class CloudinaryService {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: 'products', // Папка в Cloudinary
+          folder, // Папка в Cloudinary
           resource_type: 'image',
           transformation: [
             { width: 800, height: 800, crop: 'limit' }, // Ограничение размера
@@ -55,10 +57,7 @@ export class CloudinaryService {
               ),
             );
           } else if (result) {
-            resolve({
-              url: result.secure_url,
-              publicId: result.public_id,
-            });
+            resolve(result.secure_url);
           }
         },
       );

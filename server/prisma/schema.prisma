@@ -20,13 +20,15 @@ model User {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  weights       Weight[]
-  goals         Goal[]
-  refreshTokens RefreshToken[]
-  activityLogs  ActivityLog[]
-  productsUser  ProductUser[] // пользовательские продукты
-  activityLevel ActivityLevel  @relation(fields: [activityLevelId], references: [id])
-  role          UserRole       @relation(fields: [roleId], references: [id])
+  weights        Weight[]
+  goals          Goal[]
+  refreshTokens  RefreshToken[]
+  activityLogs   ActivityLog[]
+  productsUser   ProductUser[] // пользовательские продукты
+  brandsCreated  Brand[]        @relation("BrandCreator") // созданные бренды
+  brandsApproved Brand[]        @relation("BrandApprover") // одобренные бренды
+  activityLevel  ActivityLevel  @relation(fields: [activityLevelId], references: [id])
+  role           UserRole       @relation(fields: [roleId], references: [id])
 
   @@map("users")
 }
@@ -207,14 +209,22 @@ model Category {
 
 // 2. Бренды (справочник)
 model Brand {
-  id             String   @id @default(uuid())
-  name           String // отображаемое имя
-  normalizedName String   @unique // для дедупликации (lowercase, no spaces)
-  country        String? // страна бренда
-  photos         String[] @default([]) // логотипы/фото бренда (массив URL)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String    @id @default(uuid())
+  name            String // отображаемое имя
+  normalizedName  String    @unique // для дедупликации (lowercase, no spaces)
+  country         String? // страна бренда
+  photos          String[]  @default([]) // логотипы/фото бренда (массив URL)
+  createdBy       String // кто создал (userId)
+  isApproved      Boolean   @default(false) // одобрен ли бренд (true для админов сразу)
+  approvedBy      String? // кто одобрил (userId)
+  approvedAt      DateTime? // когда одобрен
+  rejectedAt      DateTime? // когда отклонен
+  rejectionReason String? // причина отклонения
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
+  creator        User            @relation("BrandCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  approver       User?           @relation("BrandApprover", fields: [approvedBy], references: [id], onDelete: SetNull)
   productsGlobal ProductGlobal[]
   productsUser   ProductUser[]
 

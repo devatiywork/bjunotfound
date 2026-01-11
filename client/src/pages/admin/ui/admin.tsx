@@ -1,6 +1,7 @@
-import { Settings as SettingsIcon, Users } from 'lucide-react'
+import { Package, Settings as SettingsIcon, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Tabs, type Tab } from '../../../components'
+import { ProductsManagement } from '../components/products-management'
 import { SystemSettings } from '../components/system-settings'
 import { UsersManagement } from '../components/users-management'
 
@@ -17,6 +18,12 @@ export function AdminPage() {
 			label: 'Управление пользователями',
 			icon: <Users />,
 			content: <UsersManagement />,
+		},
+		{
+			id: 'products',
+			label: 'Управление продуктами',
+			icon: <Package />,
+			content: <ProductsManagement />,
 		},
 		{
 			id: 'settings',

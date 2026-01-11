@@ -23,18 +23,15 @@ export function Tabs({
 	return (
 		<div className={`w-full ${className}`}>
 			{/* Заголовки табов */}
-			<div className='border-b border-gray-200 dark:border-gray-700'>
-				<nav
-					className='flex -mb-px space-x-4 sm:space-x-8 overflow-x-auto scrollbar-hide'
-					aria-label='Tabs'
-				>
+			<div className='border-b border-gray-200 dark:border-gray-700 overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6'>
+				<nav className='flex -mb-px gap-1' aria-label='Tabs'>
 					{tabs.map(tab => (
 						<button
 							key={tab.id}
 							onClick={() => onTabChange(tab.id)}
 							className={`
-								whitespace-nowrap py-4 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-sm sm:text-sm
-								flex items-center gap-2 sm:gap-2 transition-colors
+								whitespace-nowrap py-3 px-2.5 sm:py-4 sm:px-4 border-b-2 font-medium text-xs sm:text-sm
+								flex items-center gap-1.5 sm:gap-2 transition-colors shrink-0
 								${
 									activeTab === tab.id
 										? 'border-blue-500 text-blue-600 dark:text-blue-400'
@@ -47,11 +44,10 @@ export function Tabs({
 								cloneElement(
 									tab.icon as ReactElement,
 									{
-										className: 'w-5 h-5 sm:w-5 sm:h-5',
+										className: 'w-3.5 h-3.5 sm:w-5 sm:h-5 shrink-0',
 									} as any
 								)}
-							<span className='hidden sm:inline'>{tab.label}</span>
-							<span className='sm:hidden'>{tab.label.split(' ')[0]}</span>
+							<span>{tab.label}</span>
 						</button>
 					))}
 				</nav>

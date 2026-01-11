@@ -1,10 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import {
 	ActivityPage,
+	AdminPage,
 	ErrorPage,
 	GoalsPage,
 	HomePage,
 	LoginPage,
+	ProductsPage,
 	ProfilePage,
 	RegisterPage,
 } from '../pages/index.ts'
@@ -63,6 +65,22 @@ export const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<ActivityPage />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: 'products',
+				element: (
+					<ProtectedRoute>
+						<ProductsPage />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: 'admin',
+				element: (
+					<ProtectedRoute>
+						<AdminPage />
 					</ProtectedRoute>
 				),
 			},
