@@ -188,17 +188,31 @@ export const ProductDetailModal = ({
 		}
 	}
 
-	const flattenCategories = (cats: any[], level = 0): any[] => {
-		return cats.reduce((acc: any[], cat: any) => {
-			acc.push({
-				value: cat.id,
-				label: '  '.repeat(level) + cat.name,
-			})
-			if (cat.children?.length) {
-				acc.push(...flattenCategories(cat.children, level + 1))
+	const buildCategoryOptions = (categories: any[]): any[] => {
+		const categoryMap = new Map(categories.map(cat => [cat.id, cat]))
+
+		const getPath = (categoryId: string): string[] => {
+			const path: string[] = []
+			let current = categoryMap.get(categoryId)
+
+			while (current) {
+				path.unshift(current.name)
+				if (!current.parentId) break
+				current = categoryMap.get(current.parentId)
 			}
-			return acc
-		}, [])
+
+			return path
+		}
+
+		return categories.map(cat => {
+			const path = getPath(cat.id)
+			const displayLabel = path.length === 1 ? path[0] : path.join(' → ')
+
+			return {
+				value: cat.id,
+				label: displayLabel,
+			}
+		})
 	}
 
 	const getProductName = () => {
@@ -256,6 +270,7 @@ export const ProductDetailModal = ({
 							getProductName={getProductName}
 							isEditing={isEditing}
 							onPhotoUpdate={loadProduct}
+							isOwner={true} // TODO: определять на основе product.userId === currentUserId
 						/>
 
 						{/* Основная информация */}
@@ -274,7 +289,7 @@ export const ProductDetailModal = ({
 							setEditBrandId={setEditBrandId}
 							categories={categories}
 							brands={brands}
-							flattenCategories={flattenCategories}
+							flattenCategories={buildCategoryOptions}
 							formatDate={formatDate}
 						/>
 

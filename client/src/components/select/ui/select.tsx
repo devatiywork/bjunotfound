@@ -205,7 +205,7 @@ export const Select = ({
 					className={`
 						w-full px-4 py-3 text-left text-sm font-medium rounded-lg
 						border transition-all duration-200
-						flex items-center justify-between gap-2
+						flex items-start justify-between gap-2
 						${
 							disabled
 								? 'cursor-not-allowed opacity-50 bg-gray-100 dark:bg-gray-800'
@@ -223,14 +223,14 @@ export const Select = ({
 					aria-expanded={isOpen}
 				>
 					<span
-						className={`flex-1 truncate ${
+						className={`flex-1 wrap-break-word whitespace-normal leading-relaxed ${
 							!selectedOption ? 'text-gray-500 dark:text-gray-400' : ''
 						}`}
 					>
 						{selectedOption ? selectedOption.label : placeholder}
 					</span>
 
-					<div className='flex items-center gap-1'>
+					<div className='flex items-center gap-1 shrink-0 mt-0.5'>
 						{selectedOption && !disabled && (
 							<X
 								className='w-4 h-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors'
@@ -308,7 +308,7 @@ export const Select = ({
 												onMouseEnter={() => setHighlightedIndex(index)}
 												className={`
 												w-full px-4 py-2.5 text-left text-sm
-												flex items-center justify-between gap-2
+												flex items-start justify-between gap-2
 												transition-colors duration-150
 												${
 													isHighlighted
@@ -324,9 +324,11 @@ export const Select = ({
 												role='option'
 												aria-selected={isSelected}
 											>
-												<span className='flex-1 truncate'>{option.label}</span>
+												<span className='flex-1 wrap-break-word whitespace-normal leading-relaxed'>
+													{option.label}
+												</span>
 												{isSelected && (
-													<Check className='w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400' />
+													<Check className='w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400 mt-0.5' />
 												)}
 											</button>
 										)

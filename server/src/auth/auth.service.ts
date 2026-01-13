@@ -62,6 +62,7 @@ export class AuthService {
         gender: registerDto.gender,
         birthDate: new Date(registerDto.birthDate),
         height: registerDto.height,
+        timezone: registerDto.timezone || 'UTC',
         // formulaType и activityLevelId устанавливаются автоматически из default значений схемы
       },
       include: {

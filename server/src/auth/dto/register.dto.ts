@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
+  IsOptional,
   IsString,
   Min,
   MinLength,
@@ -26,4 +27,8 @@ export class RegisterDto {
   @IsInt()
   @Min(50)
   height: number;
+
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 }

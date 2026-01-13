@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { BrandsModule } from './brands/brands.module';
 import { CategoriesModule } from './categories/categories.module';
+import { DishesModule } from './dishes/dishes.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { GoalsModule } from './goals/goals.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module';
     CategoriesModule,
     BrandsModule,
     ProductsUserModule,
+    DishesModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

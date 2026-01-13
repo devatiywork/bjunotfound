@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
@@ -37,8 +38,8 @@ export class ProductsUserController {
   @Get()
   @Roles('admin')
   async listProducts(
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('limit', ParseIntPipe) limit: number = 20,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number = 20,
     @Query('categoryId') categoryId?: string,
     @Query('brandId') brandId?: string,
     @Query('userId') userId?: string,
@@ -55,8 +56,8 @@ export class ProductsUserController {
   @Get('my')
   async listMyProducts(
     @Request() req,
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('limit', ParseIntPipe) limit: number = 20,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number = 20,
     @Query('categoryId') categoryId?: string,
     @Query('brandId') brandId?: string,
   ) {

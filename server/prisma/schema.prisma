@@ -25,6 +25,7 @@ model User {
   refreshTokens  RefreshToken[]
   activityLogs   ActivityLog[]
   productsUser   ProductUser[] // пользовательские продукты
+  dishes         Dish[] // блюда пользователя
   brandsCreated  Brand[]        @relation("BrandCreator") // созданные бренды
   brandsApproved Brand[]        @relation("BrandApprover") // одобренные бренды
   activityLevel  ActivityLevel  @relation(fields: [activityLevelId], references: [id])
@@ -302,6 +303,7 @@ model ProductUser {
   nutrition     NutritionUserPer100? // БЖУ на 100г
   packages      ProductUserPackage[] // покупки/упаковки
   servings      ProductUserServing[] // порции
+  dishItems     DishItem[] // ингредиенты в блюдах
 
   @@map("products_user")
 }
@@ -368,6 +370,67 @@ model ProductUserServing {
   updatedAt     DateTime @updatedAt
 
   productUser ProductUser @relation(fields: [productUserId], references: [id], onDelete: Cascade)
+  dishItems   DishItem[] // ингредиенты блюд, использующие эту порцию
 
   @@map("product_user_servings")
+}
+
+// ===============================================
+// СИСТЕМА БЛЮД
+// ===============================================
+
+// 11. Блюдо (карточка блюда)
+model Dish {
+  id          String     @id @default(uuid())
+  userId      String
+  name        String // название блюда (например "Омлет с сыром")
+  description String? // текстовое описание
+  portions    Int // количество порций блюда (должно быть > 0)
+  photos      String[] // массив URL фото блюда (Cloudinary)
+  status      DishStatus @default(DRAFT) // статус блюда
+  isArchived  Boolean    @default(false) // мягкое удаление
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items DishItem[]
+
+  @@index([userId, name]) // индекс для быстрого поиска по пользователю и названию
+  @@map("dishes")
+}
+
+// 12. Ингредиент блюда (состав блюда)
+model DishItem {
+  id            String      @id @default(uuid())
+  dishId        String
+  productUserId String
+  sortOrder     Int         @default(0) // порядок отображения
+  note          String? // комментарий ("без кожи", "после жарки")
+  measureType   MeasureType // тип измерения
+  // Количество (только одно поле должно быть заполнено в зависимости от measureType)
+  amountG       Int? // граммы (для GRAMS)
+  amountMl      Int? // миллилитры (для MILLILITERS)
+  servingId     String? // ссылка на порцию (для SERVINGS)
+  servingsCount Float? // количество порций (для SERVINGS)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  dish        Dish                @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  productUser ProductUser         @relation(fields: [productUserId], references: [id], onDelete: Cascade)
+  serving     ProductUserServing? @relation(fields: [servingId], references: [id], onDelete: Restrict)
+
+  @@map("dish_items")
+}
+
+// Enum для типа измерения ингредиента
+enum MeasureType {
+  GRAMS // граммы
+  MILLILITERS // миллилитры
+  SERVINGS // порции продукта
+}
+
+// Enum для статуса блюда
+enum DishStatus {
+  DRAFT // черновик (можно сохранить с неполными данными)
+  READY // готово (все ингредиенты корректно посчитаны)
 }

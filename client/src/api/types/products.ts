@@ -102,6 +102,8 @@ export interface ProductUser {
 	nutrition: ProductNutrition
 	purchaseHistory?: ProductPurchaseHistory[]
 	portions?: ProductPortion[]
+	servings?: ProductServing[]
+	packages?: ProductPackage[]
 	category?: any // Тип категории из categories.ts
 	brand?: any // Тип бренда из brands.ts
 	productGlobal?: any

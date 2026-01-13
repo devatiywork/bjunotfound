@@ -1,7 +1,7 @@
 import {
+	Camera,
 	ChevronLeft,
 	ChevronRight,
-	Eye,
 	Package,
 	Plus,
 	Search,
@@ -48,11 +48,14 @@ export const ProductsTab = () => {
 	const [selectedProductId, setSelectedProductId] = useState<string | null>(
 		null
 	)
+	// Удаление продуктов
 	const [confirmModalOpen, setConfirmModalOpen] = useState(false)
 	const [deleteLoading, setDeleteLoading] = useState(false)
 	const [productToDelete, setProductToDelete] = useState<ProductUser | null>(
 		null
 	)
+	// Загрузка фото
+	const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null)
 
 	useEffect(() => {
 		loadFiltersData()
@@ -160,6 +163,49 @@ export const ProductsTab = () => {
 		}
 	}
 
+	// Загрузка фото продукта
+	const handleUploadPhoto = async (productId: string, file: File) => {
+		setUploadingPhoto(productId)
+		try {
+			await ProductsAPI.uploadProductPhoto(productId, file)
+			showToast('Фотография успешно загружена', 'success')
+			loadProducts() // Перезагружаем список
+		} catch (error: any) {
+			const errorMessage =
+				error.response?.data?.message || 'Ошибка при загрузке фотографии'
+			showToast(errorMessage, 'error')
+		} finally {
+			setUploadingPhoto(null)
+		}
+	}
+
+	// Обработка выбора файла фото
+	const handlePhotoSelect = (
+		productId: string,
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const file = event.target.files?.[0]
+		if (!file) return
+
+		// Валидация типа файла
+		const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+		if (!allowedTypes.includes(file.type)) {
+			showToast('Поддерживаются только JPEG, PNG и WebP форматы', 'error')
+			return
+		}
+
+		// Валидация размера (5MB)
+		const maxSize = 5 * 1024 * 1024
+		if (file.size > maxSize) {
+			showToast('Размер файла не должен превышать 5 МБ', 'error')
+			return
+		}
+
+		handleUploadPhoto(productId, file)
+		// Очищаем input
+		event.target.value = ''
+	}
+
 	// Получить название продукта (первое найденное)
 	const getProductName = (product: ProductUser): string => {
 		return product.names[0]?.name || 'Без названия'
@@ -172,17 +218,31 @@ export const ProductsTab = () => {
 	}
 
 	// Преобразование дерева категорий в плоский список для Select
-	const flattenCategories = (cats: any[], level = 0): any[] => {
-		return cats.reduce((acc, cat) => {
-			acc.push({
-				value: cat.id,
-				label: '  '.repeat(level) + cat.name,
-			})
-			if (cat.children?.length) {
-				acc.push(...flattenCategories(cat.children, level + 1))
+	const buildCategoryOptions = (categories: any[]): any[] => {
+		const categoryMap = new Map(categories.map(cat => [cat.id, cat]))
+
+		const getPath = (categoryId: string): string[] => {
+			const path: string[] = []
+			let current = categoryMap.get(categoryId)
+
+			while (current) {
+				path.unshift(current.name)
+				if (!current.parentId) break
+				current = categoryMap.get(current.parentId)
 			}
-			return acc
-		}, [])
+
+			return path
+		}
+
+		return categories.map(cat => {
+			const path = getPath(cat.id)
+			const displayLabel = path.length === 1 ? path[0] : path.join(' → ')
+
+			return {
+				value: cat.id,
+				label: displayLabel,
+			}
+		})
 	}
 
 	const handlePageChange = (newPage: number) => {
@@ -238,13 +298,8 @@ export const ProductsTab = () => {
 							onChange={value => handleFilterChange('category', value)}
 							options={[
 								{ value: '', label: 'Все категории' },
-								...flattenCategories(categories),
+								...buildCategoryOptions(categories),
 							]}
-							placeholder='Выберите категорию'
-							searchable={true}
-							disabled={
-								filtersLoading || loading || searchQuery.trim().length > 0
-							}
 						/>
 					</div>
 
@@ -318,7 +373,7 @@ export const ProductsTab = () => {
 								className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-md transition-shadow'
 							>
 								{/* Фото продукта или заглушка */}
-								<div className='aspect-video w-full bg-gray-100 dark:bg-gray-700 overflow-hidden'>
+								<div className='aspect-video w-full bg-gray-100 dark:bg-gray-700 overflow-hidden relative group'>
 									{photoUrl ? (
 										<img
 											src={photoUrl}
@@ -331,6 +386,34 @@ export const ProductsTab = () => {
 											<Utensils className='w-16 h-16 text-gray-400 dark:text-gray-500' />
 										</div>
 									)}
+
+									{/* Кнопка добавления фото - показывается при hover */}
+									<div className='absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity'>
+										<input
+											type='file'
+											accept='image/jpeg,image/png,image/webp'
+											onChange={e => handlePhotoSelect(product.id, e)}
+											className='hidden'
+											id={`photo-upload-${product.id}`}
+										/>
+										<button
+											onClick={() =>
+												document
+													.getElementById(`photo-upload-${product.id}`)
+													?.click()
+											}
+											disabled={uploadingPhoto === product.id}
+											className='flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm font-medium'
+											title={photoUrl ? 'Изменить фото' : 'Добавить фото'}
+										>
+											{uploadingPhoto === product.id ? (
+												<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+											) : (
+												<Camera className='w-4 h-4' />
+											)}
+											{photoUrl ? 'Изменить' : 'Добавить'}
+										</button>
+									</div>
 								</div>
 
 								<div className='p-4'>
@@ -347,13 +430,6 @@ export const ProductsTab = () => {
 											)}
 										</div>
 										<div className='flex gap-1'>
-											<button
-												onClick={() => handleViewProduct(product.id)}
-												className='p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
-												title='Просмотреть и редактировать'
-											>
-												<Eye className='w-4 h-4' />
-											</button>
 											<button
 												onClick={() => handleDeleteProduct(product)}
 												className='p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors'
@@ -393,14 +469,19 @@ export const ProductsTab = () => {
 											{new Date(product.createdAt).toLocaleDateString('ru-RU')}
 										</p>
 									</div>
+
+									{/* Кнопка подробнее */}
+									<button
+										onClick={() => handleViewProduct(product.id)}
+										className='mt-4 w-full px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors'
+									>
+										Подробнее
+									</button>
 								</div>
 
 								{/* TODO: В будущем добавить:
-                - Кнопку редактирования
-                - Просмотр/добавление фотографий
                 - Управление порциями
                 - История покупок
-                - Детальный просмотр в отдельной модалке
               */}
 							</div>
 						)

@@ -96,7 +96,7 @@ export const Header = () => {
 							className='flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
 						>
 							<ShoppingBasket className='h-4 w-4' />
-							<span>Продукты</span>
+							<span>Продукты и блюда</span>
 						</button>
 
 						<button

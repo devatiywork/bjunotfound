@@ -128,7 +128,7 @@ export const PackagesSection = ({
 				<h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
 					История покупок ({product.packages?.length || 0})
 				</h3>
-				{isEditing && isOwner && (
+				{isOwner && (
 					<button
 						onClick={handleOpenCreateModal}
 						className='flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
@@ -144,7 +144,7 @@ export const PackagesSection = ({
 					<p className='text-gray-600 dark:text-gray-400 mb-2'>
 						История покупок пуста
 					</p>
-					{isEditing && isOwner && (
+					{isOwner && (
 						<button
 							onClick={handleOpenCreateModal}
 							className='text-blue-600 dark:text-blue-400 hover:underline text-sm'

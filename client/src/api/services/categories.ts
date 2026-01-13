@@ -102,7 +102,7 @@ export async function uploadCategoryPhoto(
 	file: File
 ): Promise<CategoryUploadPhotoResponse> {
 	const formData = new FormData()
-	formData.append('photo', file)
+	formData.append('file', file)
 
 	const response = await apiClient.post<CategoryUploadPhotoResponse>(
 		`/categories/${id}/photo`,

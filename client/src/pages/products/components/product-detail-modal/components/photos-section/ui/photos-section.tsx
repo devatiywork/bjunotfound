@@ -9,6 +9,7 @@ interface PhotosSectionProps {
 	getProductName: () => string
 	isEditing: boolean
 	onPhotoUpdate: () => void
+	isOwner: boolean
 }
 
 export const PhotosSection = ({
@@ -16,6 +17,7 @@ export const PhotosSection = ({
 	getProductName,
 	isEditing,
 	onPhotoUpdate,
+	isOwner,
 }: PhotosSectionProps) => {
 	const { showToast } = useToast()
 	const fileInputRef = useRef<HTMLInputElement>(null)
@@ -89,7 +91,7 @@ export const PhotosSection = ({
 				<h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
 					Фотографии
 				</h3>
-				{isEditing && (
+				{isOwner && (
 					<button
 						onClick={() => fileInputRef.current?.click()}
 						disabled={uploading}
@@ -124,7 +126,7 @@ export const PhotosSection = ({
 					<p className='text-gray-600 dark:text-gray-400 mb-2'>
 						Нет загруженных фотографий
 					</p>
-					{isEditing && (
+					{isOwner && (
 						<button
 							onClick={() => fileInputRef.current?.click()}
 							className='text-blue-600 dark:text-blue-400 hover:underline'
