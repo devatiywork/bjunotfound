@@ -3,14 +3,15 @@ import { useEffect, useState } from 'react'
 import { Header } from '../../../components/index.ts'
 import {
 	ActivityWidget,
+	DailyNutritionWidget,
 	GoalsWidget,
 	WeightWidget,
 } from '../components/index.ts'
 
-type WidgetType = 'weight' | 'goals' | 'activity'
+type WidgetType = 'weight' | 'goals' | 'activity' | 'nutrition'
 
 const STORAGE_KEY = 'home-widgets-order'
-const DEFAULT_ORDER: WidgetType[] = ['weight', 'goals', 'activity']
+const DEFAULT_ORDER: WidgetType[] = ['nutrition', 'weight', 'goals', 'activity']
 
 export const HomePage = () => {
 	const [isEditMode, setIsEditMode] = useState(false)
@@ -19,7 +20,7 @@ export const HomePage = () => {
 	const [widgetOrder, setWidgetOrder] = useState<WidgetType[]>(DEFAULT_ORDER)
 
 	useEffect(() => {
-		document.title = 'Главная | BjuNotFound'
+		document.title = 'Главная | TimeNoFat'
 
 		// Загрузка порядка виджетов из localStorage
 		const savedOrder = localStorage.getItem(STORAGE_KEY)
@@ -57,6 +58,8 @@ export const HomePage = () => {
 				return <GoalsWidget key={id} />
 			case 'activity':
 				return <ActivityWidget key={id} />
+			case 'nutrition':
+				return <DailyNutritionWidget key={id} />
 		}
 	}
 

@@ -185,6 +185,55 @@ async function main() {
     console.log(`✓ Настройка "${setting.label}" создана`);
   }
 
+  // Заполнение таблицы системных типов приемов пищи
+  const mealTypes = [
+    {
+      code: 'BREAKFAST',
+      name: 'Завтрак',
+      sortOrder: 1,
+    },
+    {
+      code: 'LUNCH',
+      name: 'Обед',
+      sortOrder: 2,
+    },
+    {
+      code: 'DINNER',
+      name: 'Ужин',
+      sortOrder: 3,
+    },
+    {
+      code: 'SNACK',
+      name: 'Перекус',
+      sortOrder: 4,
+    },
+  ];
+
+  for (const mealType of mealTypes) {
+    // Ищем существующий системный тип по коду
+    const existing = await prisma.mealType.findFirst({
+      where: {
+        userId: null,
+        code: mealType.code,
+      },
+    });
+
+    if (!existing) {
+      await prisma.mealType.create({
+        data: {
+          userId: null, // Системный тип
+          code: mealType.code,
+          name: mealType.name,
+          sortOrder: mealType.sortOrder,
+          isActive: true,
+        },
+      });
+      console.log(`✓ Тип приема пищи "${mealType.name}" создан`);
+    } else {
+      console.log(`  Тип приема пищи "${mealType.name}" уже существует`);
+    }
+  }
+
   console.log('\nЗаполнение БД завершено!');
 }
 

@@ -4,7 +4,7 @@ import { ThemeToggle } from '../../../components/index.ts'
 
 export const ErrorPage = () => {
 	useEffect(() => {
-		document.title = 'Ошибка доступа | BjuNotFound'
+		document.title = 'Ошибка доступа | TimeNoFat'
 	}, [])
 
 	return (

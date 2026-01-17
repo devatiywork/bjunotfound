@@ -9,7 +9,7 @@ export function AdminPage() {
 	const [activeTab, setActiveTab] = useState('users')
 
 	useEffect(() => {
-		document.title = 'Админ-панель | BjuNotFound'
+		document.title = 'Админ-панель | TimeNoFat'
 	}, [])
 
 	const tabs: Tab[] = [

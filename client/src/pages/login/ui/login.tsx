@@ -16,7 +16,7 @@ export const LoginPage = () => {
 	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
-		document.title = 'Вход | BjuNotFound'
+		document.title = 'Вход | TimeNoFat'
 	}, [])
 
 	useEffect(() => {

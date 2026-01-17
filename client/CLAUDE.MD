@@ -1,8 +1,8 @@
-# BjuNotFound Client - Инструкции для Claude
+# TimeNoFat Client - Инструкции для Claude
 
 ## Обзор проекта
 
-**BjuNotFound** - менеджер питания и активности с трекингом КБЖУ (калории, белки, жиры, углеводы).
+**TimeNoFat** - менеджер питания и активности с трекингом КБЖУ (калории, белки, жиры, углеводы).
 
 Современное React SPA-приложение на Vite, TypeScript и Tailwind CSS v4. Использует React 19 с SWC для быстрого обновления.
 
@@ -37,6 +37,7 @@
 - `tsconfig.node.json` - Конфигурация инструментов сборки (vite.config.ts)
 
 **При добавлении новых конфигов всегда используй:**
+
 - `verbatimModuleSyntax: true`
 - `moduleResolution: "bundler"`
 
@@ -61,6 +62,7 @@
 - Очередь запросов во время обновления токена (`src/api/utils/queue.ts`)
 
 **Ключевые файлы:**
+
 - `src/api/client.ts:13-19` - Базовая конфигурация axios
 - `src/api/client.ts:22-33` - Request interceptor (добавляет токен)
 - `src/api/client.ts:38-97` - Response interceptor (обновление токена)
@@ -111,6 +113,7 @@ pages/
 - `index.html` - статичный лендинг вне React со ссылками на регистрацию/авторизацию
 
 **Текущие маршруты:**
+
 - `/` → редирект на `/app/login`
 - `/app/login` - Страница входа
 - `/app/register` - Страница регистрации
@@ -170,8 +173,7 @@ VITE_API_URL=http://localhost:3000/api
 
 ```tsx
 import { LogIn, UserPlus, Home } from 'lucide-react'
-
-<LogIn className="w-5 h-5" />
+;<LogIn className='w-5 h-5' />
 ```
 
 - Современные, легкие, tree-shakable иконки
@@ -225,16 +227,16 @@ npm run preview    # Предпросмотр production сборки
 
   ```tsx
   // Фон
-  className="bg-white dark:bg-gray-800"
+  className = 'bg-white dark:bg-gray-800'
 
   // Текст
-  className="text-gray-900 dark:text-white"
+  className = 'text-gray-900 dark:text-white'
 
   // Границы
-  className="border-gray-300 dark:border-gray-600"
+  className = 'border-gray-300 dark:border-gray-600'
 
   // Поля ввода
-  className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+  className = 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
   ```
 
 - Используй компонент `ThemeToggle` из `src/components/theme-toggle/` для переключения темы
@@ -365,6 +367,7 @@ const response = await apiClient.post('/endpoint', data)
 ### Тестирование изменений
 
 После изменений проверь:
+
 1. `npm run build` - сборка без ошибок
 2. `npm run lint` - линтинг проходит
 3. Темная тема работает корректно

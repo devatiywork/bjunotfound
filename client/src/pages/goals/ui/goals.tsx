@@ -64,7 +64,7 @@ export const GoalsPage = () => {
 	const [isApplying, setIsApplying] = useState(false)
 
 	useEffect(() => {
-		document.title = 'Цели | BjuNotFound'
+		document.title = 'Цели | TimeNoFat'
 	}, [])
 
 	useEffect(() => {

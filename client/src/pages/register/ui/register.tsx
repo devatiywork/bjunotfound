@@ -33,7 +33,7 @@ export const RegisterPage = () => {
 	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
-		document.title = 'Регистрация | BjuNotFound'
+		document.title = 'Регистрация | TimeNoFat'
 	}, [])
 
 	useEffect(() => {

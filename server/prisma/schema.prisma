@@ -28,6 +28,8 @@ model User {
   dishes         Dish[] // блюда пользователя
   brandsCreated  Brand[]        @relation("BrandCreator") // созданные бренды
   brandsApproved Brand[]        @relation("BrandApprover") // одобренные бренды
+  mealTypes      MealType[] // пользовательские типы приемов пищи
+  mealEvents     MealEvent[] // события питания
   activityLevel  ActivityLevel  @relation(fields: [activityLevelId], references: [id])
   role           UserRole       @relation(fields: [roleId], references: [id])
 
@@ -392,8 +394,9 @@ model Dish {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
-  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items DishItem[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items      DishItem[]
+  mealEvents MealEvent[] // события питания с этим блюдом
 
   @@index([userId, name]) // индекс для быстрого поиска по пользователю и названию
   @@map("dishes")
@@ -433,4 +436,66 @@ enum MeasureType {
 enum DishStatus {
   DRAFT // черновик (можно сохранить с неполными данными)
   READY // готово (все ингредиенты корректно посчитаны)
+}
+
+// ===============================================
+// СИСТЕМА ПЛАНИРОВАНИЯ ПИТАНИЯ (ГРАФИК ПИТАНИЯ)
+// ===============================================
+
+// 13. Типы приемов пищи (системные + пользовательские)
+model MealType {
+  id         String    @id @default(uuid())
+  userId     String? // NULL = системный тип, NOT NULL = пользовательский
+  code       String? // код для системных типов (BREAKFAST, LUNCH, DINNER, SNACK)
+  name       String // отображаемое название
+  sortOrder  Int       @default(0) // порядок в списках
+  isActive   Boolean   @default(true) // скрывать без удаления
+  isArchived Boolean   @default(false) // мягкое удаление для пользовательских
+  deletedAt  DateTime?
+  deletedBy  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user       User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealEvents MealEvent[]
+
+  @@unique([userId, code]) // уникальность code в рамках пользователя или системных
+  @@index([userId, isActive, sortOrder]) // для быстрой выборки активных типов
+  @@map("meal_types")
+}
+
+// 14. События питания (график питания на календаре)
+model MealEvent {
+  id          String          @id @default(uuid())
+  userId      String
+  startAt     DateTime // дата-время события (UTC)
+  dishId      String
+  portions    Float // сколько порций блюда в этом событии (> 0)
+  mealTypeId  String? // тип приема пищи (nullable)
+  note        String? // комментарий
+  status      MealEventStatus @default(PLANNED) // статус события
+  timezone    String? // часовой пояс события (если отличается от пользовательского)
+  completedAt DateTime? // когда отметили как выполненное
+  isArchived  Boolean         @default(false) // мягкое удаление
+  deletedAt   DateTime?
+  deletedBy   String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dish     Dish      @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  mealType MealType? @relation(fields: [mealTypeId], references: [id], onDelete: SetNull)
+
+  @@index([userId, isArchived, startAt]) // главный индекс для выборки диапазона
+  @@index([userId, status, startAt]) // для фильтрации по статусам
+  @@index([userId, dishId, startAt]) // для аналитики по блюдам
+  @@index([userId, mealTypeId, startAt]) // для фильтрации по типам приемов пищи
+  @@map("meal_events")
+}
+
+// Enum для статуса события питания
+enum MealEventStatus {
+  PLANNED // запланировано
+  COMPLETED // выполнено
+  SKIPPED // пропущено
 }

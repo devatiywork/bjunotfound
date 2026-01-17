@@ -12,6 +12,9 @@ import { CategoriesModule } from './categories/categories.module';
 import { DishesModule } from './dishes/dishes.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { GoalsModule } from './goals/goals.module';
+import { MealEventsModule } from './meal-events/meal-events.module';
+import { MealStatisticsModule } from './meal-statistics/meal-statistics.module';
+import { MealTypesModule } from './meal-types/meal-types.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProductsUserModule } from './products-user/products-user.module';
 import { UsersModule } from './users/users.module';
@@ -34,6 +37,9 @@ import { UsersModule } from './users/users.module';
     BrandsModule,
     ProductsUserModule,
     DishesModule,
+    MealTypesModule,
+    MealEventsModule,
+    MealStatisticsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

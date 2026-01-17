@@ -1,5 +1,6 @@
 import {
 	Activity,
+	BarChart3,
 	Home,
 	LogOut,
 	Menu,
@@ -54,14 +55,17 @@ export const Header = () => {
 					<div className='flex items-center gap-2'>
 						<button
 							onClick={() => navigate('/app/home')}
-							className='group text-xl font-bold text-gray-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400 cursor-pointer flex items-center gap-1'
+							className='group text-xl font-bold text-gray-900 transition-colors hover:text-blue-600 dark:text-white dark:hover:text-blue-400 cursor-pointer flex items-center gap-2'
 						>
 							<img
-								src={theme === 'dark' ? '/logo-black.png' : '/logo-white.png'}
-								className='w-14 h-14 object-contain transition-transform duration-150 group-hover:scale-105 group-hover:brightness-110'
-								loading='lazy'
+								src={
+									theme === 'dark'
+										? '/logo/no-back.png'
+										: '/logo/no-back-black.png'
+								}
+								alt='TimeNoFat Logo'
+								className='w-40  object-contain'
 							/>
-							<span className='mt-2.5'>NotFound</span>
 						</button>
 					</div>
 
@@ -89,6 +93,14 @@ export const Header = () => {
 						>
 							<Activity className='h-4 w-4' />
 							<span>Активность</span>
+						</button>
+
+						<button
+							onClick={() => navigate('/app/nutrition-chart')}
+							className='flex items-center gap-2 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
+						>
+							<BarChart3 className='h-4 w-4' />
+							<span>График питания</span>
 						</button>
 
 						<button
@@ -197,6 +209,14 @@ export const Header = () => {
 						>
 							<Activity className='h-5 w-5' />
 							<span>Активность</span>
+						</button>
+
+						<button
+							onClick={() => navigateAndClose('/app/nutrition-chart')}
+							className='flex items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+						>
+							<BarChart3 className='h-5 w-5' />
+							<span>График питания</span>
 						</button>
 
 						<button

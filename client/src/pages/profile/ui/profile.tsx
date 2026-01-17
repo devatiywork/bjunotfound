@@ -14,7 +14,7 @@ export const ProfilePage = () => {
 	const [activeTab, setActiveTab] = useState('profile')
 
 	useEffect(() => {
-		document.title = 'Профиль | BjuNotFound'
+		document.title = 'Профиль | TimeNoFat'
 	}, [])
 
 	useEffect(() => {

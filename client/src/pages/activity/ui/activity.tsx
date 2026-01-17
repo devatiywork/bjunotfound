@@ -34,7 +34,7 @@ export const ActivityPage = () => {
 	const [showFilters, setShowFilters] = useState(false)
 
 	useEffect(() => {
-		document.title = 'Активность | BjuNotFound'
+		document.title = 'Активность | TimeNoFat'
 	}, [])
 
 	const loadActivities = async () => {
