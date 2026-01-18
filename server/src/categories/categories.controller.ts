@@ -13,7 +13,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { imageUploadOptions } from '../file-upload/multer.config';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -27,6 +26,7 @@ import {
 import { Roles } from '../admin/decorators/roles.decorator';
 import { RolesGuard } from '../admin/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { imageUploadOptions } from '../file-upload/multer.config';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';

@@ -16,7 +16,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { imageUploadOptions } from '../file-upload/multer.config';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -30,6 +29,7 @@ import {
 import { DishStatus } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CloudinaryService } from '../file-upload/cloudinary.service';
+import { imageUploadOptions } from '../file-upload/multer.config';
 import { DishesService } from './dishes.service';
 import { AddDishItemDto } from './dto/add-dish-item.dto';
 import { CreateDishDto } from './dto/create-dish.dto';
