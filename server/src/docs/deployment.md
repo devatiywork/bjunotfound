@@ -134,13 +134,21 @@ npm run start:prod
 # Установка PM2 глобально
 npm install -g pm2
 
-# Запуск приложения
-pm2 start dist/main.js --name bjunotfound-api
+# Запуск приложения через ecosystem файл (загружает .env автоматически)
+pm2 start ecosystem.config.js
+
+# ИЛИ запуск с явной загрузкой .env (альтернатива)
+# Сначала экспортировать переменные:
+export $(grep -v '^#' .env | xargs)
+pm2 start dist/main.js --name timenofat-api
 
 # Сохранение конфигурации для автозапуска
 pm2 save
 pm2 startup
 ```
+
+> ⚠️ **Важно:** PM2 НЕ загружает `.env` файл автоматически!  
+> Используйте `ecosystem.config.js` или экспортируйте переменные вручную.
 
 #### Вариант C: Docker (если используется)
 
