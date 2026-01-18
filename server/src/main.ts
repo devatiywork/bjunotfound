@@ -64,37 +64,41 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger документация
-  const config = new DocumentBuilder()
-    .setTitle('BjuNotFound API')
-    .setDescription('API для планировщика питания и расчета КБЖУ')
-    .setVersion('1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Введите JWT токен',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
-    .build();
+  // Swagger документация (только для development)
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('BjuNotFound API')
+      .setDescription('API для планировщика питания и расчета КБЖУ')
+      .setVersion('1.0')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'JWT',
+          description: 'Введите JWT токен',
+          in: 'header',
+        },
+        'JWT-auth',
+      )
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-    customSiteTitle: 'BjuNotFound API',
-    customJs: ['/swagger-custom.js'],
-  });
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+      customSiteTitle: 'BjuNotFound API',
+      customJs: ['/swagger-custom.js'],
+    });
+  }
 
   const port = process.env.PORT ?? 5000;
   await app.listen(port);
 
   console.log(`🚀 Приложение запущено на http://localhost:${port}`);
-  console.log(`📚 Swagger документация: http://localhost:${port}/api/docs`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`📚 Swagger документация: http://localhost:${port}/api/docs`);
+  }
 }
 bootstrap();
