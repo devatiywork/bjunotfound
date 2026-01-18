@@ -43,6 +43,14 @@ const isSameDay = (left: Date, right: Date) =>
 	left.getMonth() === right.getMonth() &&
 	left.getDate() === right.getDate()
 
+// Форматирование даты в локальном времени для API (YYYY-MM-DD)
+const formatLocalDate = (date: Date): string => {
+	const year = date.getFullYear()
+	const month = (date.getMonth() + 1).toString().padStart(2, '0')
+	const day = date.getDate().toString().padStart(2, '0')
+	return `${year}-${month}-${day}`
+}
+
 interface DayTimeViewProps {
 	selectedDate: Date
 	onBack: () => void
@@ -109,8 +117,8 @@ export const DayTimeView = ({
 		setIsLoadingEvents(true)
 		try {
 			const weekEnd = addDays(weekStart, 6)
-			const startDate = weekStart.toISOString().split('T')[0]
-			const endDate = weekEnd.toISOString().split('T')[0]
+			const startDate = formatLocalDate(weekStart)
+			const endDate = formatLocalDate(weekEnd)
 
 			const data = await getMealEventsPeriod({ startDate, endDate })
 			setEvents(Array.isArray(data) ? data : [])
@@ -166,8 +174,8 @@ export const DayTimeView = ({
 	const statsDateRange = useMemo(() => {
 		const weekEnd = addDays(weekStart, 6)
 		return {
-			startDate: weekStart.toISOString().split('T')[0],
-			endDate: weekEnd.toISOString().split('T')[0],
+			startDate: formatLocalDate(weekStart),
+			endDate: formatLocalDate(weekEnd),
 		}
 	}, [weekStart])
 
