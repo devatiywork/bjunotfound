@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MealEventStatus } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { GetPeriodStatsDto } from '../../dto/index.js';
+import { getPeriodBoundaries, formatDateInTimezone } from '../../../utils/timezone.utils.js';
 
 interface DayStats {
   date: string;
@@ -33,22 +34,27 @@ export class GetCalendarStatsService {
     userId: string,
     dto: GetPeriodStatsDto,
   ): Promise<CalendarStats> {
+    // Получаем часовой пояс пользователя из БД
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+    const timezone = user?.timezone || 'UTC';
+
     const now = new Date();
     const endDate =
       dto.endDate || new Date(now.getFullYear(), now.getMonth() + 1, 0);
     const startDate =
       dto.startDate || new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const startOfDay = new Date(startDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(endDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Вычисляем границы периода с учетом часового пояса
+    const { startOfPeriod, endOfPeriod } = getPeriodBoundaries(startDate, endDate, timezone);
 
     const events = await this.prisma.mealEvent.findMany({
       where: {
         userId,
         isArchived: false,
-        startAt: { gte: startOfDay, lte: endOfDay },
+        startAt: { gte: startOfPeriod, lte: endOfPeriod },
       },
       include: {
         dish: {
@@ -71,7 +77,7 @@ export class GetCalendarStatsService {
     >();
 
     for (const event of events) {
-      const dateKey = event.startAt.toISOString().split('T')[0];
+      const dateKey = formatDateInTimezone(event.startAt, timezone);
       if (!dayMap.has(dateKey)) {
         dayMap.set(dateKey, {
           events: [],
@@ -91,9 +97,9 @@ export class GetCalendarStatsService {
     let totalCalories = 0,
       totalEvents = 0;
 
-    const currentDate = new Date(startOfDay);
-    while (currentDate <= endOfDay) {
-      const dateKey = currentDate.toISOString().split('T')[0];
+    const currentDate = new Date(startOfPeriod);
+    while (currentDate <= endOfPeriod) {
+      const dateKey = formatDateInTimezone(currentDate, timezone);
       const dayData = dayMap.get(dateKey);
 
       if (dayData) {
@@ -124,8 +130,8 @@ export class GetCalendarStatsService {
 
     return {
       period: {
-        startDate: startOfDay.toISOString().split('T')[0],
-        endDate: endOfDay.toISOString().split('T')[0],
+        startDate: formatDateInTimezone(startDate, timezone),
+        endDate: formatDateInTimezone(endDate, timezone),
       },
       days,
       summary: {

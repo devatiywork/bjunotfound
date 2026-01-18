@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MealEventStatus } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { GetPeriodStatsDto } from '../../dto/index.js';
+import { getPeriodBoundaries, formatDateInTimezone } from '../../../utils/timezone.utils.js';
 
 interface ShoppingItem {
   productId: string;
@@ -42,21 +43,26 @@ export class GetShoppingListService {
   constructor(private prisma: PrismaService) {}
 
   async execute(userId: string, dto: GetPeriodStatsDto): Promise<ShoppingList> {
+    // Получаем часовой пояс пользователя из БД
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+    const timezone = user?.timezone || 'UTC';
+
     const startDate = dto.startDate || new Date();
     const endDate =
       dto.endDate || new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    const startOfDay = new Date(startDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(endDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Вычисляем границы периода с учетом часового пояса
+    const { startOfPeriod, endOfPeriod } = getPeriodBoundaries(startDate, endDate, timezone);
 
     const events = await this.prisma.mealEvent.findMany({
       where: {
         userId,
         isArchived: false,
         status: MealEventStatus.PLANNED,
-        startAt: { gte: startOfDay, lte: endOfDay },
+        startAt: { gte: startOfPeriod, lte: endOfPeriod },
       },
       include: {
         dish: {
@@ -116,7 +122,7 @@ export class GetShoppingListService {
         const eventInfo = {
           eventId: event.id,
           dishName: event.dish.name,
-          date: event.startAt.toISOString().split('T')[0],
+          date: formatDateInTimezone(event.startAt, timezone),
           grams: Math.round(grams),
         };
 
@@ -176,8 +182,8 @@ export class GetShoppingListService {
 
     return {
       period: {
-        startDate: startOfDay.toISOString().split('T')[0],
-        endDate: endOfDay.toISOString().split('T')[0],
+        startDate: formatDateInTimezone(startDate, timezone),
+        endDate: formatDateInTimezone(endDate, timezone),
       },
       items,
       summary: {

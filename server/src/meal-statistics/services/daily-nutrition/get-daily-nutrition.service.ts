@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MealEventStatus } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { GetDailyNutritionDto } from '../../dto/index.js';
+import { getDayBoundaries, formatDateInTimezone } from '../../../utils/timezone.utils.js';
 
 interface MealNutrition {
   mealTypeId: string | null;
@@ -62,11 +63,14 @@ export class GetDailyNutritionService {
     userId: string,
     dto: GetDailyNutritionDto,
   ): Promise<DailyNutrition> {
-    const date = dto.date || new Date();
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Получаем часовой пояс пользователя из БД
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+    const timezone = user?.timezone || 'UTC';
+
+    const { startOfDay, endOfDay } = getDayBoundaries(dto.date, timezone);
 
     const events = await this.prisma.mealEvent.findMany({
       where: {
@@ -188,7 +192,7 @@ export class GetDailyNutritionService {
       : null;
 
     return {
-      date: startOfDay.toISOString().split('T')[0],
+      date: formatDateInTimezone(dto.date || new Date(), timezone),
       meals,
       totals: {
         consumed: {

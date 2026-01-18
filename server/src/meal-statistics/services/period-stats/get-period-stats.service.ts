@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MealEventStatus } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { GetPeriodStatsDto } from '../../dto/index.js';
+import { getPeriodBoundaries, formatDateInTimezone } from '../../../utils/timezone.utils.js';
 
 interface NutritionTotals {
   calories: number;
@@ -42,20 +43,25 @@ export class GetPeriodStatsService {
   constructor(private prisma: PrismaService) {}
 
   async execute(userId: string, dto: GetPeriodStatsDto): Promise<PeriodStats> {
+    // Получаем часовой пояс пользователя из БД
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+    const timezone = user?.timezone || 'UTC';
+
     const endDate = dto.endDate || new Date();
     const startDate =
       dto.startDate || new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    const startOfDay = new Date(startDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(endDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Вычисляем границы периода с учетом часового пояса
+    const { startOfPeriod, endOfPeriod } = getPeriodBoundaries(startDate, endDate, timezone);
 
     const events = await this.prisma.mealEvent.findMany({
       where: {
         userId,
         isArchived: false,
-        startAt: { gte: startOfDay, lte: endOfDay },
+        startAt: { gte: startOfPeriod, lte: endOfPeriod },
       },
       include: {
         dish: {
@@ -90,7 +96,7 @@ export class GetPeriodStatsService {
     const totalDays = Math.max(
       1,
       Math.ceil(
-        (endOfDay.getTime() - startOfDay.getTime()) / (24 * 60 * 60 * 1000),
+        (endOfPeriod.getTime() - startOfPeriod.getTime()) / (24 * 60 * 60 * 1000),
       ),
     );
 
@@ -122,8 +128,8 @@ export class GetPeriodStatsService {
 
     return {
       period: {
-        startDate: startOfDay.toISOString().split('T')[0],
-        endDate: endOfDay.toISOString().split('T')[0],
+        startDate: formatDateInTimezone(startDate, timezone),
+        endDate: formatDateInTimezone(endDate, timezone),
         totalDays,
       },
       events: {
