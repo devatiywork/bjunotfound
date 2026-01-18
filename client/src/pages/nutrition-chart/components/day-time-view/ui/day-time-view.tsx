@@ -14,12 +14,12 @@ import { AddEntryModal } from '../../add-entry-modal/index.ts'
 import { StatisticsModal } from '../../statistics-panel/index.ts'
 
 const EventCard = lazy(() =>
-	import('../../event-card/index.ts').then(m => ({ default: m.EventCard }))
+	import('../../event-card/index.ts').then(m => ({ default: m.EventCard })),
 )
 const EventDetailModal = lazy(() =>
 	import('../../event-detail-modal/index.ts').then(m => ({
 		default: m.EventDetailModal,
-	}))
+	})),
 )
 
 const WEEKDAY_LABELS = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В']
@@ -79,7 +79,7 @@ export const DayTimeView = ({
 	const weekStart = useMemo(() => getStartOfWeek(selectedDate), [selectedDate])
 	const weekDays = useMemo(
 		() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
-		[weekStart]
+		[weekStart],
 	)
 
 	// Часы для временной шкалы (0-23)
@@ -117,8 +117,10 @@ export const DayTimeView = ({
 		setIsLoadingEvents(true)
 		try {
 			const weekEnd = addDays(weekStart, 6)
-			const startDate = formatLocalDate(weekStart)
-			const endDate = formatLocalDate(weekEnd)
+			// Расширяем диапазон на ±1 день для учёта разницы часовых поясов
+			// Событие в локальном времени может иметь UTC дату на день раньше/позже
+			const startDate = formatLocalDate(addDays(weekStart, -1))
+			const endDate = formatLocalDate(addDays(weekEnd, 1))
 
 			const data = await getMealEventsPeriod({ startDate, endDate })
 			setEvents(Array.isArray(data) ? data : [])
@@ -146,7 +148,7 @@ export const DayTimeView = ({
 				)
 			})
 		},
-		[events, selectedDate]
+		[events, selectedDate],
 	)
 
 	// Клик по событию
@@ -213,8 +215,8 @@ export const DayTimeView = ({
 										isSelected
 											? 'bg-red-500 text-white'
 											: isToday
-											? 'text-red-500 dark:text-red-400'
-											: 'text-gray-900 dark:text-gray-100'
+												? 'text-red-500 dark:text-red-400'
+												: 'text-gray-900 dark:text-gray-100'
 									}`}
 								>
 									{day.getDate()}

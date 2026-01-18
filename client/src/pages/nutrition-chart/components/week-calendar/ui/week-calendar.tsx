@@ -26,14 +26,14 @@ import {
 const MobileCalendar = lazy(() =>
 	import('../../mobile-calendar/index.ts').then(m => ({
 		default: m.MobileCalendar,
-	}))
+	})),
 )
 
 // Ленивая загрузка EventCard
 const EventCard = lazy(() =>
 	import('../../event-card/index.ts').then(m => ({
 		default: m.EventCard,
-	}))
+	})),
 )
 
 // Мемоизированный компонент строки времени
@@ -108,7 +108,7 @@ export const WeekCalendar = () => {
 
 	const weekDays = useMemo(
 		() => Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)),
-		[weekStart]
+		[weekStart],
 	)
 
 	const weekRangeLabel = useMemo(() => {
@@ -192,8 +192,10 @@ export const WeekCalendar = () => {
 
 		setIsLoadingEvents(true)
 		try {
-			const startDate = formatDateForApi(weekStart)
-			const endDate = formatDateForApi(addDays(weekStart, 6))
+			// Расширяем диапазон на ±1 день для учёта разницы часовых поясов
+			// Событие в локальном времени может иметь UTC дату на день раньше/позже
+			const startDate = formatDateForApi(addDays(weekStart, -1))
+			const endDate = formatDateForApi(addDays(weekStart, 7))
 			const data = await getMealEventsPeriod({ startDate, endDate })
 			setEvents(Array.isArray(data) ? data : [])
 			// Триггерим обновление статистики
@@ -222,7 +224,7 @@ export const WeekCalendar = () => {
 				)
 			})
 		},
-		[events, selectedDate]
+		[events, selectedDate],
 	)
 
 	// Обновление текущего времени (только для десктопа)
