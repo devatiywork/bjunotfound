@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { imageUploadOptions } from '../file-upload/multer.config';
 import {
   ApiBearerAuth,
   ApiConsumes,
@@ -282,7 +283,7 @@ export class BrandsController {
   @Post(':id/photo')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: 'Загрузить фото бренда',

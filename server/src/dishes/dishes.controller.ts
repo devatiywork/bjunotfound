@@ -16,6 +16,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { imageUploadOptions } from '../file-upload/multer.config';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -311,7 +312,7 @@ export class DishesController {
   // ============= Photo Endpoints =============
 
   @Post(':id/photos')
-  @UseInterceptors(FileInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('photo', imageUploadOptions))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: 'Загрузить фото блюда',

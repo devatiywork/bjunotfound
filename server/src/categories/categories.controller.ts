@@ -13,6 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { imageUploadOptions } from '../file-upload/multer.config';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -196,7 +197,7 @@ export class CategoriesController {
   @ApiParam({ name: 'id', description: 'ID категории' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
   @Post(':id/photo')
   uploadPhoto(
     @Param('id') id: string,

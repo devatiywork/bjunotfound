@@ -52,6 +52,9 @@ THROTTLE_LIMIT=10
 CLOUDINARY_CLOUD_NAME=ваш-cloud-name
 CLOUDINARY_API_KEY=ваш-api-key
 CLOUDINARY_API_SECRET=ваш-api-secret
+
+# ====== ЗАГРУЗКА ФАЙЛОВ ======
+MAX_FILE_SIZE_MB=5
 ```
 
 #### Описание переменных:
@@ -69,6 +72,7 @@ CLOUDINARY_API_SECRET=ваш-api-secret
 | `THROTTLE_TTL`           | Окно rate limiting (мс)                      | `60000` (60 сек)                                             |
 | `THROTTLE_LIMIT`         | Макс. запросов за окно                       | `10`                                                         |
 | `CLOUDINARY_*`           | Креды Cloudinary для загрузки фото           | Получить на cloudinary.com                                   |
+| `MAX_FILE_SIZE_MB`       | Макс. размер загружаемых файлов (MB)         | `5`                                                          |
 
 ---
 

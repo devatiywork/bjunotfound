@@ -1,0 +1,8 @@
+# robots.txt for TimeNoFat.ru
+
+User-agent: *
+Allow: /
+Disallow: /app/
+
+# Sitemap
+Sitemap: https://timenofat.ru/sitemap.xml
