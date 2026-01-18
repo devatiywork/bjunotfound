@@ -6,6 +6,7 @@ import { ConfirmModal, Input, useToast } from '../../../../../components'
 import {
 	CategoryModal,
 	CategoryTreeItemContainer,
+	MultiCategoryModal,
 	PhotoModal,
 } from '../../index'
 
@@ -22,14 +23,15 @@ export const CategoriesTab = ({ isAdmin }: CategoriesTabProps) => {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [onlyActive, setOnlyActive] = useState(false)
 	const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-		new Set()
+		new Set(),
 	)
 
 	// Модальные окна
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 	const [categoryModalMode, setCategoryModalMode] = useState<'create' | 'edit'>(
-		'create'
+		'create',
 	)
+	const [multiCategoryModalOpen, setMultiCategoryModalOpen] = useState(false)
 	const [selectedCategory, setSelectedCategory] =
 		useState<CategoryTreeNode | null>(null)
 	const [photoModalOpen, setPhotoModalOpen] = useState(false)
@@ -87,6 +89,10 @@ export const CategoriesTab = ({ isAdmin }: CategoriesTabProps) => {
 		setCategoryModalOpen(true)
 	}
 
+	const handleMultiCreateCategory = () => {
+		setMultiCategoryModalOpen(true)
+	}
+
 	const handleEditCategory = (category: CategoryTreeNode) => {
 		setSelectedCategory(category)
 		setCategoryModalMode('edit')
@@ -109,11 +115,11 @@ export const CategoriesTab = ({ isAdmin }: CategoriesTabProps) => {
 					`• Пользовательских продуктов: ${
 						category._count?.productsUser || 0
 					}\n\n` +
-					`Удаление невозможно. Сначала удалите или переместите связанные данные.`
+					`Удаление невозможно. Сначала удалите или переместите связанные данные.`,
 			)
 		} else {
 			setDeleteMessage(
-				`Вы уверены, что хотите удалить категорию "${category.name}"?\n\nЭто действие необратимо.`
+				`Вы уверены, что хотите удалить категорию "${category.name}"?\n\nЭто действие необратимо.`,
 			)
 		}
 
@@ -212,14 +218,24 @@ export const CategoriesTab = ({ isAdmin }: CategoriesTabProps) => {
 					</label>
 				</div>
 
-				{/* Кнопка создания */}
-				<button
-					onClick={handleCreateCategory}
-					className='flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium'
-				>
-					<Plus className='w-5 h-5' />
-					<span>Добавить категорию</span>
-				</button>
+				{/* Кнопки создания */}
+				<div className='flex gap-2'>
+					<button
+						onClick={handleCreateCategory}
+						className='flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium'
+					>
+						<Plus className='w-5 h-5' />
+						<span className='hidden sm:inline'>Добавить</span>
+					</button>
+					<button
+						onClick={handleMultiCreateCategory}
+						className='flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium'
+						title='Добавить несколько категорий'
+					>
+						<Plus className='w-5 h-5' />
+						<span className='hidden sm:inline'>Несколько</span>
+					</button>
+				</div>
 			</div>
 
 			{/* Счетчик */}
@@ -229,7 +245,7 @@ export const CategoriesTab = ({ isAdmin }: CategoriesTabProps) => {
 						? 'Загрузка...'
 						: `Всего категорий: ${
 								searchQuery ? categories.length : countAllCategories(categories)
-						  }`}
+							}`}
 				</p>
 			</div>
 
@@ -336,6 +352,12 @@ export const CategoriesTab = ({ isAdmin }: CategoriesTabProps) => {
 						: 'danger'
 				}
 				loading={deleteLoading}
+			/>
+			<MultiCategoryModal
+				isOpen={multiCategoryModalOpen}
+				onClose={() => setMultiCategoryModalOpen(false)}
+				allCategories={categories}
+				onSuccess={handleModalSuccess}
 			/>
 		</div>
 	)

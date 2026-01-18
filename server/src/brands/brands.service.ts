@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
+import { MergeBrandsDto } from './dto/merge-brands.dto';
 import { RejectBrandDto } from './dto/reject-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import {
@@ -8,9 +9,11 @@ import {
   DeleteBrandPhotoService,
   DeleteBrandService,
   GetBrandService,
+  ListBrandGroupsService,
   ListBrandsService,
   ListMyBrandsService,
   ListPendingBrandsService,
+  MergeBrandsService,
   RejectBrandService,
   UpdateBrandService,
   UploadBrandPhotoService,
@@ -26,8 +29,10 @@ export class BrandsService {
     private listBrandsService: ListBrandsService,
     private listPendingBrandsService: ListPendingBrandsService,
     private listMyBrandsService: ListMyBrandsService,
+    private listBrandGroupsService: ListBrandGroupsService,
     private approveBrandService: ApproveBrandService,
     private rejectBrandService: RejectBrandService,
+    private mergeBrandsService: MergeBrandsService,
     private uploadBrandPhotoService: UploadBrandPhotoService,
     private deleteBrandPhotoService: DeleteBrandPhotoService,
   ) {}
@@ -48,12 +53,16 @@ export class BrandsService {
     return this.getBrandService.execute(id, isAdmin, userId);
   }
 
-  async listBrands(isAdmin: boolean) {
-    return this.listBrandsService.execute(isAdmin);
+  async listBrands(isAdmin: boolean, userId?: string) {
+    return this.listBrandsService.execute(isAdmin, userId);
   }
 
   async listPendingBrands() {
     return this.listPendingBrandsService.execute();
+  }
+
+  async listBrandGroups() {
+    return this.listBrandGroupsService.execute();
   }
 
   async listMyBrands(userId: string) {
@@ -66,6 +75,14 @@ export class BrandsService {
 
   async rejectBrand(id: string, dto: RejectBrandDto) {
     return this.rejectBrandService.execute(id, dto);
+  }
+
+  async mergeBrands(dto: MergeBrandsDto, adminId: string) {
+    return this.mergeBrandsService.execute(
+      dto.targetBrandId,
+      dto.brandIdsToMerge,
+      adminId,
+    );
   }
 
   async uploadBrandPhoto(

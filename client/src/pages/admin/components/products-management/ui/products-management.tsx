@@ -29,7 +29,7 @@ export function ProductsManagement() {
 
 	// Модальное окно продукта
 	const [selectedProductId, setSelectedProductId] = useState<string | null>(
-		null
+		null,
 	)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -72,7 +72,7 @@ export function ProductsManagement() {
 				BrandsAPI.listBrands(),
 			])
 			setCategories(categoriesRes.categories)
-			setBrands(brandsRes.filter((b: any) => b.isApproved))
+			setBrands(brandsRes)
 		} catch (error: any) {
 			showToast('Ошибка при загрузке фильтров', 'error')
 		} finally {
@@ -308,7 +308,7 @@ export function ProductsManagement() {
 											<td className='px-4 py-3 whitespace-nowrap'>
 												<div className='text-xs text-gray-500 dark:text-gray-400'>
 													{new Date(product.createdAt).toLocaleDateString(
-														'ru-RU'
+														'ru-RU',
 													)}
 												</div>
 											</td>

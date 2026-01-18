@@ -1,12 +1,15 @@
+import { Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import * as BrandsAPI from '../../../../../api/services/brands'
 import * as CategoriesAPI from '../../../../../api/services/categories'
 import * as ProductsAPI from '../../../../../api/services/products'
+import type { Brand } from '../../../../../api/types/brands'
 import type {
 	CreateProductUserDto,
 	Lang,
 } from '../../../../../api/types/products'
 import { Input, Modal, Select, useToast } from '../../../../../components'
+import { CreateBrandModal } from '../../create-brand-modal/index.ts'
 
 interface ProductModalProps {
 	isOpen: boolean
@@ -58,6 +61,9 @@ export const ProductModal = ({
 	const [loading, setLoading] = useState(false)
 	const [dataLoading, setDataLoading] = useState(false)
 
+	// Модалка создания бренда
+	const [createBrandModalOpen, setCreateBrandModalOpen] = useState(false)
+
 	// Загрузка данных для селектов и продукта
 	useEffect(() => {
 		if (isOpen) {
@@ -76,8 +82,7 @@ export const ProductModal = ({
 				BrandsAPI.listBrands(),
 			])
 			setCategories(categoriesRes.categories)
-			// Фильтруем только approved бренды на клиенте
-			setBrands(brandsRes.filter(b => b.isApproved))
+			setBrands(brandsRes)
 		} catch (error: any) {
 			showToast('Ошибка при загрузке данных', 'error')
 		} finally {
@@ -130,6 +135,14 @@ export const ProductModal = ({
 	const handleClose = () => {
 		resetForm()
 		onClose()
+	}
+
+	// Обработчик успешного создания бренда
+	const handleBrandCreated = (brand: Brand) => {
+		// Добавляем новый бренд в список (даже если не approved - это бренд текущего пользователя)
+		setBrands(prev => [...prev, brand])
+		// Автоматически выбираем созданный бренд
+		setBrandId(brand.id)
 	}
 
 	const validateForm = (): string | null => {
@@ -364,17 +377,28 @@ export const ProductModal = ({
 									Загрузка брендов...
 								</div>
 							) : (
-								<Select
-									value={brandId}
-									onChange={setBrandId}
-									options={[
-										{ value: '', label: 'Не выбран' },
-										...brands.map(b => ({ value: b.id, label: b.name })),
-									]}
-									disabled={loading}
-									searchable={true}
-									placeholder='Выберите бренд'
-								/>
+								<>
+									<Select
+										value={brandId}
+										onChange={setBrandId}
+										options={[
+											{ value: '', label: 'Не выбран' },
+											...brands.map(b => ({ value: b.id, label: b.name })),
+										]}
+										disabled={loading}
+										searchable={true}
+										placeholder='Выберите бренд'
+									/>
+									<button
+										type='button'
+										onClick={() => setCreateBrandModalOpen(true)}
+										disabled={loading}
+										className='mt-2 flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50'
+									>
+										<Plus className='w-4 h-4' />
+										Создать новый бренд
+									</button>
+								</>
 							)}
 						</div>
 					</div>
@@ -540,6 +564,13 @@ export const ProductModal = ({
 					</button>
 				</div>
 			</form>
+
+			{/* Модалка создания бренда */}
+			<CreateBrandModal
+				isOpen={createBrandModalOpen}
+				onClose={() => setCreateBrandModalOpen(false)}
+				onSuccess={handleBrandCreated}
+			/>
 		</Modal>
 	)
 }

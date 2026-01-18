@@ -56,7 +56,10 @@ export class UpdateProductUserService {
         throw new BadRequestException(`Бренд с ID "${dto.brandId}" не найден`);
       }
 
-      if (!brand.isApproved) {
+      // Разрешаем использовать бренд если:
+      // 1. Бренд одобрен модерацией, ИЛИ
+      // 2. Бренд создан текущим пользователем (даже если не одобрен)
+      if (!brand.isApproved && brand.createdBy !== userId) {
         throw new BadRequestException(
           `Бренд "${brand.name}" не одобрен модерацией`,
         );

@@ -50,8 +50,8 @@ export const Select = ({
 	// Фильтрация опций по поисковому запросу
 	const filteredOptions = searchable
 		? options.filter(option =>
-				option.label.toLowerCase().includes(searchQuery.toLowerCase())
-		  )
+				option.label.toLowerCase().includes(searchQuery.toLowerCase()),
+			)
 		: options
 
 	// Найти выбранную опцию
@@ -83,8 +83,8 @@ export const Select = ({
 	}, [isOpen, searchable])
 
 	// Определение направления открытия dropdown и его позиции
-	useEffect(() => {
-		if (isOpen && containerRef.current) {
+	const updateDropdownPosition = () => {
+		if (containerRef.current) {
 			const rect = containerRef.current.getBoundingClientRect()
 			const spaceBelow = window.innerHeight - rect.bottom
 			const spaceAbove = rect.top
@@ -102,6 +102,25 @@ export const Select = ({
 				width: rect.width,
 			})
 		}
+	}
+
+	useEffect(() => {
+		if (isOpen) {
+			updateDropdownPosition()
+		}
+	}, [isOpen])
+
+	// Обновление позиции dropdown при скролле страницы
+	useEffect(() => {
+		if (!isOpen) return
+
+		const handleScroll = () => {
+			updateDropdownPosition()
+		}
+
+		// Слушаем скролл на window и всех родительских элементах
+		window.addEventListener('scroll', handleScroll, true)
+		return () => window.removeEventListener('scroll', handleScroll, true)
 	}, [isOpen])
 
 	// Сброс подсветки при изменении фильтра
@@ -154,7 +173,7 @@ export const Select = ({
 					setIsOpen(true)
 				} else {
 					setHighlightedIndex(prev =>
-						prev < filteredOptions.length - 1 ? prev + 1 : prev
+						prev < filteredOptions.length - 1 ? prev + 1 : prev,
 					)
 				}
 				break
@@ -336,7 +355,7 @@ export const Select = ({
 								)}
 							</div>
 						</div>,
-						document.body
+						document.body,
 					)}
 			</div>
 

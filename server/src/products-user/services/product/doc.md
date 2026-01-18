@@ -23,7 +23,7 @@
   - `lang?` (Language, default: RU) - Язык названия
   - `barcode?` (string, 8-13 цифр) - Штрихкод продукта
   - `categoryId?` (string) - ID категории
-  - `brandId?` (string) - ID бренда (должен быть approved)
+  - `brandId?` (string) - ID бренда (одобренный или созданный текущим пользователем)
   - `productGlobalId?` (string) - ID глобального продукта
   - `nutrition` (NutritionDto) - Пищевая ценность на 100г/100мл
     - `caloriesKcal` (number, 0-9999) - Калории (ккал)
@@ -46,7 +46,7 @@
 **Исключения:**
 
 - `NotFoundException` - если categoryId, brandId или productGlobalId не существуют
-- `BadRequestException` - если бренд не прошел модерацию (status !== 'approved')
+- `BadRequestException` - если бренд не прошел модерацию И создан другим пользователем
 
 **Особенности:**
 
@@ -111,7 +111,7 @@ const product = await createProductUserService.execute('user-id', {
 
 - `NotFoundException` - если продукт, categoryId, brandId или productGlobalId не существуют
 - `ForbiddenException` - если пользователь не является владельцем и не администратор
-- `BadRequestException` - если новый бренд не прошел модерацию
+- `BadRequestException` - если новый бренд не прошел модерацию И создан другим пользователем
 
 **Особенности:**
 

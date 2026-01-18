@@ -26,6 +26,50 @@ export interface Brand {
 	}
 }
 
+// Бренд в группе (для объединения)
+export interface BrandGroupItem {
+	id: string
+	name: string
+	status: 'approved' | 'pending' | 'rejected'
+	productsCount: number
+	creator: {
+		id: string
+		email: string
+	}
+}
+
+// Группа похожих брендов
+export interface BrandGroup {
+	groupId: string
+	hasApproved: boolean
+	totalProducts: number
+	brands: BrandGroupItem[]
+}
+
+// Запрос на объединение брендов
+export interface MergeBrandsDto {
+	targetBrandId: string
+	brandIdsToMerge: string[]
+}
+
+// Информация об отклонённом бренде после merge
+export interface RejectedBrandInfo {
+	id: string
+	name: string
+	productsUserMigrated: number
+	productsGlobalMigrated: number
+}
+
+// Ответ на объединение брендов
+export interface MergeBrandsResponse {
+	approvedBrand: {
+		id: string
+		name: string
+	}
+	rejectedBrands: RejectedBrandInfo[]
+	totalProductsMigrated: number
+}
+
 export interface CreateBrandDto {
 	name: string
 	country?: string

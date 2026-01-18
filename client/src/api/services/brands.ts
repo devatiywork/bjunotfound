@@ -1,10 +1,13 @@
 import { apiClient } from '../client'
 import type {
 	Brand,
+	BrandGroup,
 	CreateBrandDto,
 	DeleteBrandResponse,
 	DeletePhotoResponse,
 	GetBrandResponse,
+	MergeBrandsDto,
+	MergeBrandsResponse,
 	RejectBrandDto,
 	UpdateBrandDto,
 	UploadPhotoResponse,
@@ -19,7 +22,7 @@ export async function createBrand(dto: CreateBrandDto): Promise<Brand> {
 // Обновление бренда (только админы)
 export async function updateBrand(
 	id: string,
-	dto: UpdateBrandDto
+	dto: UpdateBrandDto,
 ): Promise<Brand> {
 	const response = await apiClient.patch<Brand>(`/brands/${id}`, dto)
 	return response.data
@@ -64,7 +67,7 @@ export async function approveBrand(id: string): Promise<Brand> {
 // Отклонение бренда (только админы)
 export async function rejectBrand(
 	id: string,
-	dto: RejectBrandDto
+	dto: RejectBrandDto,
 ): Promise<Brand> {
 	const response = await apiClient.post<Brand>(`/brands/${id}/reject`, dto)
 	return response.data
@@ -73,7 +76,7 @@ export async function rejectBrand(
 // Загрузка фото бренда
 export async function uploadBrandPhoto(
 	id: string,
-	file: File
+	file: File,
 ): Promise<UploadPhotoResponse> {
 	const formData = new FormData()
 	formData.append('file', file)
@@ -85,7 +88,7 @@ export async function uploadBrandPhoto(
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
-		}
+		},
 	)
 	return response.data
 }
@@ -93,13 +96,30 @@ export async function uploadBrandPhoto(
 // Удаление фото бренда (только админы)
 export async function deleteBrandPhoto(
 	id: string,
-	photoUrl: string
+	photoUrl: string,
 ): Promise<DeletePhotoResponse> {
 	const response = await apiClient.delete<DeletePhotoResponse>(
 		`/brands/${id}/photo`,
 		{
 			data: { photoUrl },
-		}
+		},
+	)
+	return response.data
+}
+
+// Получение групп похожих брендов (только админы)
+export async function getBrandGroups(): Promise<BrandGroup[]> {
+	const response = await apiClient.get<BrandGroup[]>('/brands/similar-groups')
+	return response.data
+}
+
+// Объединение брендов (только админы)
+export async function mergeBrands(
+	dto: MergeBrandsDto,
+): Promise<MergeBrandsResponse> {
+	const response = await apiClient.post<MergeBrandsResponse>(
+		'/brands/merge',
+		dto,
 	)
 	return response.data
 }

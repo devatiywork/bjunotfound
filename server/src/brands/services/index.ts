@@ -6,6 +6,8 @@ export { ListMyBrandsService } from './brand/list-my-brands.service';
 export { ListPendingBrandsService } from './brand/list-pending-brands.service';
 export { UpdateBrandService } from './brand/update-brand.service';
 export { ApproveBrandService } from './moderation/approve-brand.service';
+export { ListBrandGroupsService } from './moderation/list-brand-groups.service';
+export { MergeBrandsService } from './moderation/merge-brands.service';
 export { RejectBrandService } from './moderation/reject-brand.service';
 export { DeleteBrandPhotoService } from './photo/delete-brand-photo.service';
 export { UploadBrandPhotoService } from './photo/upload-brand-photo.service';

@@ -91,7 +91,7 @@ export const ProductDetailModal = ({
 				BrandsAPI.listBrands(),
 			])
 			setCategories(categoriesRes.categories)
-			setBrands(brandsRes.filter((b: any) => b.isApproved))
+			setBrands(brandsRes)
 		} catch (error: any) {
 			showToast('Ошибка при загрузке данных', 'error')
 		} finally {

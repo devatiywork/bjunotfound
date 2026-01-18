@@ -113,6 +113,142 @@ const rejected = await rejectBrandService.execute('brand-id', {
 // rejectedAt: new Date(), rejectionReason: '...'
 ```
 
+## ListBrandGroupsService
+
+**Файл:** `list-brand-groups.service.ts`
+
+**Назначение:** Группировка похожих брендов для удобной модерации и объединения
+
+### Метод: `execute()`
+
+**Описание:**
+Возвращает группы похожих брендов. Каждая группа содержит бренды с похожими названиями, которые можно объединить в один. Включает информацию о количестве продуктов для каждого бренда.
+
+**Параметры:**
+Нет
+
+**Возвращаемое значение:**
+
+```typescript
+Array<{
+  groupId: string; // Уникальный ID группы
+  hasApproved: boolean; // Есть ли одобренный бренд в группе
+  totalProducts: number; // Общее количество продуктов в группе
+  brands: Array<{
+    id: string;
+    name: string;
+    normalizedName: string;
+    country: string | null;
+    photos: string[];
+    isApproved: boolean;
+    rejectedAt: Date | null;
+    status: 'approved' | 'pending' | 'rejected';
+    createdAt: Date;
+    createdBy: string;
+    creator: { id: string; email: string };
+    productsCount: number; // Количество продуктов у бренда
+  }>;
+}>;
+```
+
+**Алгоритм группировки:**
+
+1. Точное совпадение `normalizedName`
+2. Одно название содержит другое как подстроку
+3. Расстояние Левенштейна ≥ 70%
+
+**Сортировка:**
+
+- Группы: сначала БЕЗ одобренного (требуют решения)
+- Внутри группы: одобренные первыми, потом по количеству продуктов
+
+**Пример использования:**
+
+```typescript
+const groups = await listBrandGroupsService.execute();
+// [
+//   {
+//     groupId: 'group-uuid-1',
+//     hasApproved: false,
+//     totalProducts: 5,
+//     brands: [
+//       { name: 'Данон', status: 'pending', productsCount: 3 },
+//       { name: 'Danone', status: 'pending', productsCount: 2 }
+//     ]
+//   }
+// ]
+```
+
+## MergeBrandsService
+
+**Файл:** `merge-brands.service.ts`
+
+**Назначение:** Объединение нескольких похожих брендов в один с переносом продуктов
+
+### Метод: `execute(targetBrandId, brandIdsToMerge, adminId)`
+
+**Описание:**
+Объединяет несколько брендов в один:
+
+1. Одобряет целевой бренд (если ещё не одобрен)
+2. Переносит все продукты (user + global) с других брендов на целевой
+3. Отклоняет остальные бренды с причиной "Объединён с..."
+
+**Параметры:**
+
+- `targetBrandId` (string) - ID бренда, который будет одобрен
+- `brandIdsToMerge` (string[]) - Массив ID брендов для объединения (включая targetBrandId)
+- `adminId` (string) - ID администратора
+
+**Возвращаемое значение:**
+
+```typescript
+{
+  approvedBrand: {
+    id: string;
+    name: string;
+  }
+  rejectedBrands: Array<{
+    id: string;
+    name: string;
+    productsUserMigrated: number;
+    productsGlobalMigrated: number;
+  }>;
+  totalProductsMigrated: number;
+}
+```
+
+**Исключения:**
+
+- `BadRequestException` - если targetBrandId не в списке brandIdsToMerge
+- `BadRequestException` - если целевой бренд отклонён
+- `NotFoundException` - если один или несколько брендов не найдены
+
+**Особенности:**
+
+- Выполняется в транзакции (атомарность)
+- Продукты переносятся через `updateMany` (эффективно)
+- Причина отклонения автоматически: "Объединён с брендом X (ID: ...)"
+- Если целевой бренд уже одобрен — просто переносит продукты и отклоняет остальные
+
+**Пример использования:**
+
+```typescript
+const result = await mergeBrandsService.execute(
+  'target-brand-id',
+  ['target-brand-id', 'brand-2', 'brand-3'],
+  'admin-id',
+);
+// {
+//   approvedBrand: { id: 'target-brand-id', name: 'Danone' },
+//   rejectedBrands: [
+//     { id: 'brand-2', name: 'Данон', productsUserMigrated: 3, productsGlobalMigrated: 0 },
+//     { id: 'brand-3', name: 'Danon', productsUserMigrated: 2, productsGlobalMigrated: 1 }
+//   ],
+//   totalProductsMigrated: 6
+// }
+```
+
 ## Логика модерации
 
 ### Статусы бренда

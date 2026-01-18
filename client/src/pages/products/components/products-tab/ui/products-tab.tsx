@@ -46,13 +46,13 @@ export const ProductsTab = () => {
 	const [productModalOpen, setProductModalOpen] = useState(false)
 	const [detailModalOpen, setDetailModalOpen] = useState(false)
 	const [selectedProductId, setSelectedProductId] = useState<string | null>(
-		null
+		null,
 	)
 	// Удаление продуктов
 	const [confirmModalOpen, setConfirmModalOpen] = useState(false)
 	const [deleteLoading, setDeleteLoading] = useState(false)
 	const [productToDelete, setProductToDelete] = useState<ProductUser | null>(
-		null
+		null,
 	)
 	// Загрузка фото
 	const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null)
@@ -86,7 +86,7 @@ export const ProductsTab = () => {
 				BrandsAPI.listBrands(),
 			])
 			setCategories(categoriesRes.categories)
-			setBrands(brandsRes.filter(b => b.isApproved))
+			setBrands(brandsRes)
 		} catch (error: any) {
 			showToast('Ошибка при загрузке фильтров', 'error')
 		} finally {
@@ -182,7 +182,7 @@ export const ProductsTab = () => {
 	// Обработка выбора файла фото
 	const handlePhotoSelect = (
 		productId: string,
-		event: React.ChangeEvent<HTMLInputElement>
+		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
 		const file = event.target.files?.[0]
 		if (!file) return
