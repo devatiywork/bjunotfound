@@ -58,8 +58,10 @@ export class PrismaService
           user: url.username || undefined,
           password: password || undefined,
           database: url.pathname ? url.pathname.replace(/^\//, '') : undefined,
-          ssl:
-            process.env.NODE_ENV === 'production'
+          // SSL: отключаем если в URL есть sslmode=disable, иначе на проде включаем
+          ssl: connectionString.includes('sslmode=disable')
+            ? false
+            : process.env.NODE_ENV === 'production'
               ? { rejectUnauthorized: false }
               : false,
         });
